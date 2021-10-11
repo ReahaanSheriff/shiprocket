@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "80831947214",
+    "project_id": "shipping-d3a3a",
+    "storage_bucket": "shipping-d3a3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80831947214:android:7da2d06499cddd63a0cb9f",
+        "android_client_info": {
+          "package_name": "com.example.shipping"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "80831947214-3v7vj6mo2dgol5oqb47914tpp7h167df.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtiGOPMgEwzfkxf7WzxLJswxdGmDEkegM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "80831947214-3v7vj6mo2dgol5oqb47914tpp7h167df.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

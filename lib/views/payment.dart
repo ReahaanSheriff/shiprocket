@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class Payment extends StatefulWidget {
   const Payment({Key? key}) : super(key: key);
@@ -8,6 +9,59 @@ class Payment extends StatefulWidget {
 }
 
 class _PaymentState extends State<Payment> {
+  late Razorpay razorpay;
+  TextEditingController textEditingController = new TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    razorpay = new Razorpay();
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlerExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    razorpay.clear();
+  }
+
+  void openCheckout() {
+    var options = {
+      "key": "rzp_test_m9PcTlXKqHX4Hy",
+      "amount": num.parse(textEditingController.text) * 100,
+      "name": "Sample App",
+      "description": "Payment for the some random product",
+      "prefill": {"contact": "2323232323", "email": "shdjsdh@gmail.com"},
+      "external": {
+        "wallets": ["paytm"]
+      }
+    };
+
+    try {
+      razorpay.open(options);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void handlerPaymentSuccess() {
+    print("Payment success");
+    //Toast.show("Pament success", context);
+  }
+
+  void handlerErrorFailure() {
+    print("Payment error");
+    //Toast.show("Pament error", context);
+  }
+
+  void handlerExternalWallet() {
+    print("External Wallet");
+    //Toast.show("External Wallet", context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,6 +72,7 @@ class _PaymentState extends State<Payment> {
         children: [
           Container(
             child: TextFormField(
+              controller: textEditingController,
               decoration: const InputDecoration(
                 icon: const Icon(Icons.price_change),
                 //hintText: 'Door no and Street Name',
@@ -26,8 +81,10 @@ class _PaymentState extends State<Payment> {
             ),
           ),
           ElevatedButton(
-            child: const Text('Pay'),
-            onPressed: () {},
+            child: const Text('Pay Now'),
+            onPressed: () {
+              openCheckout();
+            },
             //onPressed: null,
           )
         ],

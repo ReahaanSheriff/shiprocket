@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shipping/helperfunctions/sharedpref_helper.dart';
 import 'package:shipping/services/auth.dart';
 import 'package:shipping/views/createshipment.dart';
 import 'package:shipping/views/signin.dart';
+import 'package:shipping/views/viewshipments.dart';
 import 'package:shipping/views/wallet.dart';
 
 class Home extends StatefulWidget {
@@ -140,7 +142,11 @@ class _HomeState extends State<Home> {
                         child: ListTile(
                             contentPadding: EdgeInsets.all(10),
                             onTap: () {
-                              print("tapped");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ViewShipments()),
+                              );
                             },
                             title: Text("View Shipments"),
                             subtitle: Text("View shipments by status."),
@@ -157,7 +163,14 @@ class _HomeState extends State<Home> {
                         child: ListTile(
                             contentPadding: EdgeInsets.all(10),
                             onTap: () {
-                              print("tapped");
+                              Fluttertoast.showToast(
+                                  msg: "Account Settings",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
                             },
                             title: Text("Account Settings"),
                             subtitle: Text("Manage your shiprocket account."),

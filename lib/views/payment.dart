@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shipping/views/createshipment.dart';
+import 'package:shipping/views/home.dart';
+import 'package:shipping/views/viewshipments.dart';
 
 class Payment extends StatefulWidget {
   const Payment({Key? key}) : super(key: key);
@@ -13,7 +17,6 @@ class _PaymentState extends State<Payment> {
   TextEditingController textEditingController = new TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     razorpay = new Razorpay();
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
@@ -23,7 +26,6 @@ class _PaymentState extends State<Payment> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     razorpay.clear();
   }
@@ -34,7 +36,7 @@ class _PaymentState extends State<Payment> {
       "amount": num.parse(textEditingController.text) * 100,
       "name": "Sample App",
       "description": "Payment for the some random product",
-      "prefill": {"contact": "2323232323", "email": "shdjsdh@gmail.com"},
+      "prefill": {"contact": "9500777777", "email": "reahaan@gmail.com"},
       "external": {
         "wallets": ["paytm"]
       }
@@ -47,19 +49,49 @@ class _PaymentState extends State<Payment> {
     }
   }
 
-  void handlerPaymentSuccess() {
-    print("Payment success");
-    //Toast.show("Pament success", context);
+  void handlerPaymentSuccess(PaymentSuccessResponse response) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ViewShipments()),
+    );
+    Fluttertoast.showToast(
+        msg: "Payment success",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 4,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 
   void handlerErrorFailure() {
-    print("Payment error");
-    //Toast.show("Pament error", context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateShipment()),
+    );
+    Fluttertoast.showToast(
+        msg: "Payment Failure",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 4,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 
   void handlerExternalWallet() {
-    print("External Wallet");
-    //Toast.show("External Wallet", context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Home()),
+    );
+    Fluttertoast.showToast(
+        msg: "handler External Wallet function",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 4,
+        backgroundColor: Colors.yellow,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 
   @override
@@ -85,7 +117,6 @@ class _PaymentState extends State<Payment> {
             onPressed: () {
               openCheckout();
             },
-            //onPressed: null,
           )
         ],
       ),

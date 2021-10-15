@@ -165,6 +165,23 @@ class _PickupAddressState extends State<PickupAddress> {
               labelText: 'Mobile No',
             ),
           ),
+          Center(
+            child: Text("Product Detail", style: TextStyle(fontSize: 20.0)),
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.topic),
+              //hintText: 'Country',
+              labelText: 'Product Name',
+            ),
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.price_change),
+              //hintText: 'Country',
+              labelText: 'Value of Product',
+            ),
+          ),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.monitor_weight),
@@ -205,23 +222,6 @@ class _PickupAddressState extends State<PickupAddress> {
                 )),
               ),
             ],
-          ),
-          Center(
-            child: Text("Product Detail", style: TextStyle(fontSize: 20.0)),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.topic),
-              //hintText: 'Country',
-              labelText: 'Product Name',
-            ),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.price_change),
-              //hintText: 'Country',
-              labelText: 'Value of Product',
-            ),
           ),
           new Container(
               padding: const EdgeInsets.only(left: 150.0, top: 20.0),

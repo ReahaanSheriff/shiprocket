@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shipping/views/home.dart';
 import 'package:shipping/views/viewshipments.dart';
-import 'package:shipping/views/payment.dart';
+
 import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:http/http.dart' as http;
 
 String GenerateOrderId() {
   var rnd = new Random();
@@ -49,6 +52,7 @@ class PickupAddress extends StatefulWidget {
 class _PickupAddressState extends State<PickupAddress> {
   final _formKey = GlobalKey<FormState>();
   var txt = new TextEditingController();
+  var pincontroller = new TextEditingController();
 
   double count = 0;
   double getPrice() {
@@ -56,6 +60,21 @@ class _PickupAddressState extends State<PickupAddress> {
       count = 40.5;
     });
     return count;
+  }
+
+// Pincode API
+
+  Future getPincodeData() async {
+    var response = await http.get(
+        Uri.https('api.postalpincode.in', '/pincode/${pincontroller.text}'));
+    var jsonData = jsonDecode(response.body);
+
+    // for (var i in jsonData) {
+    //   print(i["PostOffice"][0]["District"]);
+    //   print(i["PostOffice"][0]['State']);
+    //   print(i["PostOffice"][0]['Country']);
+    // }
+    print(jsonData[0]["PostOffice"][0]);
   }
 
 //Razor pay config
@@ -172,62 +191,6 @@ class _PickupAddressState extends State<PickupAddress> {
             ),
           ),
           TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.person),
-              //hintText: 'Door no and Street Name',
-              labelText: 'Door no and Street Name',
-            ),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.map),
-              //hintText: 'Area',
-              labelText: 'Area',
-            ),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.location_city),
-              //hintText: 'Landmark',
-              labelText: 'Landmark',
-            ),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.location_city),
-              // hintText: 'City',
-              labelText: 'City',
-            ),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.map),
-              //hintText: 'State',
-              labelText: 'State',
-            ),
-          ),
-          TextFormField(
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(6),
-            ],
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            validator: (value) {
-              return value!.length < 6 ? 'Pincode must be of length 6' : null;
-            },
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.map),
-              //hintText: 'State',
-              labelText: 'Pincode',
-            ),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.location_city),
-              //hintText: 'Country',
-              labelText: 'Country',
-            ),
-          ),
-          TextFormField(
             inputFormatters: [
               LengthLimitingTextInputFormatter(10),
             ],
@@ -241,19 +204,6 @@ class _PickupAddressState extends State<PickupAddress> {
               labelText: 'Mobile No',
             ),
           ),
-          Center(
-            child: Text(
-              "Drop Address",
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.person),
-              //hintText: 'Door no and Street Name',
-              labelText: 'Name',
-            ),
-          ),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.person),
@@ -276,6 +226,20 @@ class _PickupAddressState extends State<PickupAddress> {
             ),
           ),
           TextFormField(
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(6),
+            ],
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            validator: (value) {
+              return value!.length < 6 ? 'Pincode must be of length 6' : null;
+            },
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.map),
+              //hintText: 'State',
+              labelText: 'Pincode',
+            ),
+          ),
+          TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.location_city),
               // hintText: 'City',
@@ -289,6 +253,7 @@ class _PickupAddressState extends State<PickupAddress> {
               labelText: 'State',
             ),
           ),
+
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.location_city),
@@ -296,18 +261,18 @@ class _PickupAddressState extends State<PickupAddress> {
               labelText: 'Country',
             ),
           ),
+
+          Center(
+            child: Text(
+              "Drop Address",
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ),
           TextFormField(
-            validator: (value) {
-              return value!.length < 6 ? 'Pincode must be of length 6' : null;
-            },
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(6),
-            ],
             decoration: const InputDecoration(
-              icon: const Icon(Icons.map),
-              //hintText: 'State',
-              labelText: 'Pincode',
+              icon: const Icon(Icons.person),
+              //hintText: 'Door no and Street Name',
+              labelText: 'Name',
             ),
           ),
           TextFormField(
@@ -324,6 +289,69 @@ class _PickupAddressState extends State<PickupAddress> {
               labelText: 'Mobile No',
             ),
           ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.person),
+              //hintText: 'Door no and Street Name',
+              labelText: 'Door no and Street Name',
+            ),
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.map),
+              //hintText: 'Area',
+              labelText: 'Area',
+            ),
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.location_city),
+              //hintText: 'Landmark',
+              labelText: 'Landmark',
+            ),
+          ),
+          TextFormField(
+            controller: pincontroller,
+            onFieldSubmitted: (String str) {
+              setState(() {
+                getPincodeData();
+              });
+            },
+            validator: (value) {
+              return value!.length < 6 ? 'Pincode must be of length 6' : null;
+            },
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(6),
+            ],
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.map),
+              //hintText: 'State',
+              labelText: 'Pincode',
+            ),
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.location_city),
+              // hintText: 'City',
+              labelText: 'City',
+            ),
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.map),
+              //hintText: 'State',
+              labelText: 'State',
+            ),
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.location_city),
+              //hintText: 'Country',
+              labelText: 'Country',
+            ),
+          ),
+
           Center(
             child: Text("Product Detail", style: TextStyle(fontSize: 20.0)),
           ),

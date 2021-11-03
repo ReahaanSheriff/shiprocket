@@ -14,6 +14,37 @@ class AuthMethods {
     return await auth.currentUser;
   }
 
+  Future<String> login(String email, String password) async {
+    try {
+      await auth.signInWithEmailAndPassword(email: email, password: password);
+      print("Logging with email");
+      print(auth.currentUser);
+
+      return "Logged in";
+    } catch (e) {
+      print(auth.currentUser);
+      print("cannot");
+      return e.toString();
+    }
+  }
+
+  Future<String> signup(
+      String username, String mobile, String email, String password) async {
+    try {
+      // UserCredential result = await auth.createUserWithEmailAndPassword(
+      //     email: email, password: password);
+      // User? user = result.user;
+      // user!.updateProfile(
+      //   displayName: username,
+      // );
+      await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      return "Signed Up";
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   signInWithGoogle(BuildContext context) async {
     final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
     final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -44,7 +75,7 @@ class AuthMethods {
         "email": userDetails.email,
         "username": userDetails.email!.replaceAll("@gmail.com", ""),
         "name": userDetails.displayName,
-        "imgUrl": userDetails.photoURL
+        "imgUrl": userDetails.photoURL,
       };
       DatabaseMethods()
           .addUserInfoToDB(userDetails.uid, userInfoMap)
@@ -57,10 +88,17 @@ class AuthMethods {
 
   Future signOut() async {
     final GoogleSignIn _googleSignIn = GoogleSignIn();
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.clear();
-    await _googleSignIn.disconnect();
-    await auth.signOut();
+    try {
+      await auth.signOut();
+      await _googleSignIn.signOut();
+    } catch (e) {
+      await _googleSignIn.disconnect();
+      await _googleSignIn.signOut();
+      await auth.signOut();
+    }
   }
 }

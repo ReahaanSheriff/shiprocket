@@ -36,8 +36,14 @@ dependencies:
   flutter_signin_button: ^2.0.0
   razorpay_flutter: ^1.2.1
   fluttertoast: ^8.0.8
-  vector_math: ^2.1.1
+  vector_math: ^2.1.0
   http:
+  geolocator: ^7.7.1
+  geocoding: ^2.0.1
+  intl:
+  flutter_dotenv: ^3.1.0
+ 
+
 
 
 
@@ -65,6 +71,7 @@ flutter:
 
   assets:
     - images/
+    - .env
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

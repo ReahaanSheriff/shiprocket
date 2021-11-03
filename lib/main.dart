@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:shipping/services/auth.dart';
 import 'package:shipping/views/home.dart';
 import 'package:shipping/views/signin.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 
 void main() async {
   //To initialize firebase core
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await DotEnv.load(fileName: ".env");
   runApp(MyApp());
 }
 

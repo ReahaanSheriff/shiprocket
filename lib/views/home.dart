@@ -1,12 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shipping/helperfunctions/sharedpref_helper.dart';
 import 'package:shipping/services/auth.dart';
 import 'package:shipping/views/createshipment.dart';
+
 import 'package:shipping/views/profile.dart';
 import 'package:shipping/views/signin.dart';
 import 'package:shipping/views/viewshipments.dart';
-import 'package:shipping/views/wallet.dart';
+import 'package:shipping/views/cost.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -16,40 +18,51 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
   String myName = "", myProfilePic = "", myUserName = "", myEmail = "";
-  getMyInfoFromSharedPreference() async {
-    myName = await SharedPreferenceHelper().getDisplayName() as String;
-    //myName = (await SharedPreferenceHelper().getDisplayName())!;
-    myProfilePic = await SharedPreferenceHelper().getUserProfileUrl() as String;
-    myUserName = (await SharedPreferenceHelper().getUserName())!;
-    myEmail = await SharedPreferenceHelper().getUserEmail() as String;
+
+  getCurrentUser() async {
+    setState(() {
+      myName = auth.currentUser!.displayName.toString();
+    });
+    return await auth.currentUser;
   }
+
+  // getMyInfoFromSharedPreference() async {
+  //   myName = await SharedPreferenceHelper().getDisplayName() as String;
+  //   //myName = (await SharedPreferenceHelper().getDisplayName())!;
+  //   myProfilePic = await SharedPreferenceHelper().getUserProfileUrl() as String;
+  //   myUserName = (await SharedPreferenceHelper().getUserName())!;
+  //   myEmail = await SharedPreferenceHelper().getUserEmail() as String;
+  // }
 
   @override
   Widget build(BuildContext context) {
+    getCurrentUser();
     return Scaffold(
         appBar: AppBar(
           title: Text("Shipping"),
-          actions: [
-            InkWell(
-                onTap: () {
-                  AuthMethods().signOut().then((s) {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => SignIn()));
-                  });
-                },
-                child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    child: Column(children: [
-                      Row(children: [
-                        Text(myUserName),
-                        Icon(
-                          Icons.exit_to_app,
-                          size: 25,
-                        )
-                      ])
-                    ])))
-          ],
+          automaticallyImplyLeading: false,
+          // actions: [
+          //   InkWell(
+          //       onTap: () {
+          //         AuthMethods().signOut().then((s) {
+          //           Navigator.pushReplacement(context,
+          //               MaterialPageRoute(builder: (context) => SignIn()));
+          //         });
+          //       },
+          //       child: Container(
+          //           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          //           child: Column(children: [
+          //             Row(children: [
+          //               Text(myName),
+          //               Icon(
+          //                 Icons.exit_to_app,
+          //                 size: 25,
+          //               )
+          //             ])
+          //           ])))
+          // ],
         ),
         body: Column(
           children: [
@@ -124,14 +137,13 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Wallet()),
+                                    builder: (context) => ViewShipments()),
                               );
                             },
-                            title: Text("Go to Wallet"),
-                            subtitle: Text(
-                                "Add and check your shiprocket wallet balance."),
+                            title: Text("View Shipments"),
+                            subtitle: Text("View shipments by status."),
                             leading: Icon(
-                              Icons.account_balance_wallet,
+                              Icons.assignment_rounded,
                               size: 40,
                             ),
                             trailing: Icon(Icons.arrow_forward_ios_outlined))),
@@ -145,14 +157,14 @@ class _HomeState extends State<Home> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => ViewShipments()),
+                                MaterialPageRoute(builder: (context) => Cost()),
                               );
                             },
-                            title: Text("View Shipments"),
-                            subtitle: Text("View shipments by status."),
+                            title: Text("Calculate Price"),
+                            subtitle:
+                                Text("Calculate price for your shipment."),
                             leading: Icon(
-                              Icons.assignment_rounded,
+                              Icons.account_balance_wallet,
                               size: 40,
                             ),
                             trailing: Icon(Icons.arrow_forward_ios_outlined))),

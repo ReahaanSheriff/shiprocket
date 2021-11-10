@@ -38,9 +38,9 @@ class SigninForm extends StatefulWidget {
 }
 
 class _SigninFormState extends State<SigninForm> {
-  var usernamecontroller = new TextEditingController();
+  var confirmcontroller = new TextEditingController();
   var emailcontroller = new TextEditingController();
-  var mobilecontroller = new TextEditingController();
+
   var passwordcontroller = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   @override
@@ -50,14 +50,6 @@ class _SigninFormState extends State<SigninForm> {
       child: Column(
         children: [
           TextFormField(
-            controller: usernamecontroller,
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.person),
-              //hintText: 'Door no and Street Name',
-              labelText: 'Username',
-            ),
-          ),
-          TextFormField(
             controller: emailcontroller,
             decoration: const InputDecoration(
               icon: const Icon(Icons.person),
@@ -65,14 +57,7 @@ class _SigninFormState extends State<SigninForm> {
               labelText: 'Email',
             ),
           ),
-          TextFormField(
-            controller: mobilecontroller,
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.person),
-              //hintText: 'Door no and Street Name',
-              labelText: 'Phone Number',
-            ),
-          ),
+
           TextFormField(
             controller: passwordcontroller,
             obscureText: true,
@@ -80,6 +65,14 @@ class _SigninFormState extends State<SigninForm> {
               icon: const Icon(Icons.person),
               //hintText: 'Door no and Street Name',
               labelText: 'Password',
+            ),
+          ),
+          TextFormField(
+            controller: confirmcontroller,
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.person),
+              //hintText: 'Door no and Street Name',
+              labelText: 'Confirm Pasword',
             ),
           ),
           // ElevatedButton(
@@ -116,9 +109,8 @@ class _SigninFormState extends State<SigninForm> {
           //     child: Text("LOGIN")),
           ElevatedButton(
               onPressed: () {
-                final String username = usernamecontroller.text.trim();
+                final String confirmPassword = confirmcontroller.text.trim();
                 final String email = emailcontroller.text.trim();
-                final String mobile = mobilecontroller.text.trim();
                 final String password =
                     passwordcontroller.text.toString().trim();
                 if (email.isEmpty) {
@@ -142,56 +134,81 @@ class _SigninFormState extends State<SigninForm> {
                       textColor: Colors.white,
                       fontSize: 16.0);
                   print("Password field is empty");
-                } else if (username.isEmpty) {
+                } else if (password != confirmPassword) {
                   Fluttertoast.showToast(
-                      msg: "Username field is empty",
+                      msg: "Password does not match",
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.BOTTOM,
                       timeInSecForIosWeb: 4,
                       backgroundColor: Colors.red,
                       textColor: Colors.white,
                       fontSize: 16.0);
-                  print("Username field is empty");
                 } else {
                   try {
                     AuthMethods()
-                        .signup(username, mobile, email, password)
+                        .signup(email, password, confirmPassword)
                         .then((value) async {
+                      if (value == "Signed Up") {
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => Home()));
+                        Fluttertoast.showToast(
+                            msg: "Signed In successfully",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.green,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      }
+                    }).then((value) async {
                       User? user = FirebaseAuth.instance.currentUser;
-
                       await FirebaseFirestore.instance
                           .collection("users")
                           .doc(user!.uid)
                           .set({
                         'uid': user.uid,
-                        'username': username,
-                        'phoneNumber': mobile,
-                        'displayName': username,
                         'email': email,
                         'password': password,
-                        'photoURL':
-                            "'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-UGFLqpsC_pSdrqB07CZ6x7XRlV9LjYjJEZ3QfQ2ZcdXedG1D-m2DMRB2ZgSekb98S8&usqp=CAU'",
                       });
-                      user.updateProfile(
-                        displayName: username,
-                        photoURL:
-                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-UGFLqpsC_pSdrqB07CZ6x7XRlV9LjYjJEZ3QfQ2ZcdXedG1D-m2DMRB2ZgSekb98S8&usqp=CAU',
-                      );
-
-                      if (user != null) {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => Home()));
-                      }
-                      print("signed up successfully");
-                      Fluttertoast.showToast(
-                          msg: "Signed In successfully",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 4,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
                     });
+                    // AuthMethods()
+                    //     .signup(username, mobile, email, password)
+                    //     .then((value) async {
+                    //   User? user = FirebaseAuth.instance.currentUser;
+
+                    //   await FirebaseFirestore.instance
+                    //       .collection("users")
+                    //       .doc(user!.uid)
+                    //       .set({
+                    //     'uid': user.uid,
+                    //     'username': username,
+                    //     'phoneNumber': mobile,
+                    //     'displayName': username,
+                    //     'email': email,
+                    //     'password': password,
+                    //     'photoURL':
+                    //         "'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-UGFLqpsC_pSdrqB07CZ6x7XRlV9LjYjJEZ3QfQ2ZcdXedG1D-m2DMRB2ZgSekb98S8&usqp=CAU'",
+                    //   });
+                    //   user.updateProfile(
+                    //     displayName: username,
+                    //     photoURL:
+                    //         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-UGFLqpsC_pSdrqB07CZ6x7XRlV9LjYjJEZ3QfQ2ZcdXedG1D-m2DMRB2ZgSekb98S8&usqp=CAU',
+                    //   );
+
+                    //   if (user != null && value == "Signed Up") {
+                    //     Navigator.pushReplacement(context,
+                    //         MaterialPageRoute(builder: (context) => Home()));
+                    //     Fluttertoast.showToast(
+                    //         msg: "Signed In successfully",
+                    //         toastLength: Toast.LENGTH_SHORT,
+                    //         gravity: ToastGravity.CENTER,
+                    //         timeInSecForIosWeb: 4,
+                    //         backgroundColor: Colors.green,
+                    //         textColor: Colors.white,
+                    //         fontSize: 16.0);
+                    //   }
+                    //   print("signed up successfully");
+                    // });
                   } catch (e) {
                     Fluttertoast.showToast(
                         msg: "Invalid Credentials",

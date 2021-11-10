@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:load/load.dart';
 import 'package:shipping/helperfunctions/sharedpref_helper.dart';
 import 'package:shipping/services/auth.dart';
 import 'package:shipping/views/createshipment.dart';
@@ -9,6 +13,7 @@ import 'package:shipping/views/profile.dart';
 import 'package:shipping/views/signin.dart';
 import 'package:shipping/views/viewshipments.dart';
 import 'package:shipping/views/cost.dart';
+import 'package:vector_math/vector_math.dart' as vec;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,6 +23,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    hideLoadingDialog();
+  }
+
   final FirebaseAuth auth = FirebaseAuth.instance;
   String myName = "", myProfilePic = "", myUserName = "", myEmail = "";
 
@@ -112,11 +124,15 @@ class _HomeState extends State<Home> {
                         child: ListTile(
                             contentPadding: EdgeInsets.all(10),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CreateShipment()),
-                              );
+                              showLoadingDialog();
+                              Timer(Duration(seconds: 1), () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CreateShipment()),
+                                );
+                                hideLoadingDialog();
+                              });
                             },
                             title: Text("Create New Shipment"),
                             subtitle:
@@ -134,6 +150,8 @@ class _HomeState extends State<Home> {
                         child: ListTile(
                             contentPadding: EdgeInsets.all(10),
                             onTap: () {
+                              showLoadingDialog();
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

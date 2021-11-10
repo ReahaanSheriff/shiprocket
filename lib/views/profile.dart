@@ -17,6 +17,10 @@ class _ProfileState extends State<Profile> {
   String myProfilePic = FirebaseAuth.instance.currentUser!.photoURL.toString();
   String myName = FirebaseAuth.instance.currentUser!.displayName.toString();
   String myEmail = FirebaseAuth.instance.currentUser!.email.toString();
+  String newName = FirebaseAuth.instance.currentUser!.email
+      .toString()
+      .replaceAll("@gmail.com", "");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +41,9 @@ class _ProfileState extends State<Profile> {
                       padding: const EdgeInsets.only(top: 20),
                       child: CircleAvatar(
                         radius: 50.0,
-                        backgroundImage: NetworkImage(myProfilePic),
+                        backgroundImage: NetworkImage(myProfilePic == "null"
+                            ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-UGFLqpsC_pSdrqB07CZ6x7XRlV9LjYjJEZ3QfQ2ZcdXedG1D-m2DMRB2ZgSekb98S8&usqp=CAU'
+                            : myProfilePic),
                         backgroundColor: Colors.transparent,
                       ),
                     ),
@@ -46,7 +52,8 @@ class _ProfileState extends State<Profile> {
                       child: ListTile(
                         contentPadding: EdgeInsets.all(10),
                         onTap: () {},
-                        title: Text(myName),
+                        // ignore: unnecessary_null_comparison
+                        title: Text(myName == "null" ? newName : myName),
                         subtitle: Text(myEmail),
                         // leading: Icon(
                         //   Icons.add_business_rounded,

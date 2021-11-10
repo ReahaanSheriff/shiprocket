@@ -1,11 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:load/load.dart';
 import 'package:shipping/views/home.dart';
+
 import 'package:shipping/views/viewshipments.dart';
 import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,6 +24,7 @@ String generateOrderId() {
   while (next < 100000) {
     next *= 10;
   }
+
   return ('ord' + next.toInt().toString());
 }
 
@@ -52,10 +58,22 @@ class PickupAddress extends StatefulWidget {
   _PickupAddressState createState() => _PickupAddressState();
 }
 
-class _PickupAddressState extends State<PickupAddress> {
+class _PickupAddressState extends State<PickupAddress>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+
   bool _isEnable = true;
+  bool showAni = true;
+  var fname = new TextEditingController();
+  var fmobile = new TextEditingController();
+  var tname = new TextEditingController();
+  var tmobile = new TextEditingController();
+  var prodname = new TextEditingController();
+  var prodval = new TextEditingController();
   var weightcontroller = new TextEditingController();
+  var prodlen = new TextEditingController();
+  var prodwidth = new TextEditingController();
+  var prodheight = new TextEditingController();
   var tocity = new TextEditingController();
   var tostate = new TextEditingController();
   var tocountry = new TextEditingController();
@@ -67,6 +85,7 @@ class _PickupAddressState extends State<PickupAddress> {
   var fromPinController = new TextEditingController();
   var pick = new TextEditingController();
   var drop = new TextEditingController();
+
   var fromAddress = "",
       tolat,
       tolong,
@@ -83,7 +102,8 @@ class _PickupAddressState extends State<PickupAddress> {
       fcity,
       fstate,
       fcountry,
-      thirtyDaysFromNow;
+      thirtyDaysFromNow,
+      distance;
   // double count = 0;
 
   // double getPrice() {
@@ -141,16 +161,20 @@ class _PickupAddressState extends State<PickupAddress> {
       fromAddress =
           '${place.thoroughfare}, \n ${place.subLocality},\n ${place.locality},${place.administrativeArea}, \n ${place.country}, ${place.postalCode}';
       _isEnable = false;
-      pick.text = fromstate.text =
-          fromcity.text = fromPinController.text = fromcountry.text = "";
-
+      pick.text =
+          '${place.thoroughfare} ${place.subLocality} ${place.locality} ${place.administrativeArea} ${place.country}';
+      // fromstate.text = fromcity.text = "";
+      fromPinController.text = place.postalCode!;
+      // fromcountry.text = "";
+      getFromPincodeData();
       setState(() {});
-      print(place);
+      print(place.thoroughfare);
+      // print(place);
 
-      print(position.latitude);
-      print(position.longitude);
-      print(tolat);
-      print(tolong);
+      // print(position.latitude);
+      // print(position.longitude);
+      // print(tolat);
+      // print(tolong);
     } on Exception catch (e) {
       // TODO
       Fluttertoast.showToast(
@@ -238,7 +262,7 @@ class _PickupAddressState extends State<PickupAddress> {
       }
     } on Exception catch (e) {
       Fluttertoast.showToast(
-          msg: "Pincode invalid or not serviceable",
+          msg: "hey",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 4,
@@ -256,6 +280,49 @@ class _PickupAddressState extends State<PickupAddress> {
 
     // TODO
   }
+
+  // createShipmentApi() async {
+  //   try {
+  //     var response =
+  //         await http.post(Uri.parse("http://192.168.225.107:8000/"), headers: {
+  //       "Accept": "application/json",
+  //       "Content-Type": "application/x-www-form-urlencoded"
+  //     }, body: {
+  //       "orderId": "ord12345679",
+  //       // "created": "2021-11-06T07:18:08.940754Z",
+  //       "pname": "reahaan",
+  //       "pmobile": "9868724896",
+  //       "paddress": "86, Vrindavan Garden, (Near Janakpuri Park),Sahibabad",
+  //       "ppincode": "201005",
+  //       "pcity": "Ghaziabad",
+  //       "pstate": "Uttar Pradesh",
+  //       "pcountry": "India",
+  //       "dname": "sheriff",
+  //       "dmobile": "9620957490",
+  //       "daddress":
+  //           "Mulencheriparambil house, Valavanangadi, padiyoor P O, Thrissur, kerala,680688",
+  //       "dcity": "Thrissur",
+  //       "dstate": "Kerala",
+  //       "dpincode": "680688",
+  //       "dcountry": "India",
+  //       "productName": "books",
+  //       "productValue": "500",
+  //       "weight": "0.5",
+  //       "length": "22",
+  //       "width": "14",
+  //       "height": "3",
+  //       "shippingPrice": "56",
+  //       "estimateDate": "20/11/2021"
+  //     });
+  //     print("created");
+  //     print(response.body);
+  //   } catch (e) {
+  //     print("Error in create shipment");
+  //     print(e);
+  //   }
+  // }
+
+// End create shipment api
 
 //Razor pay config
 
@@ -296,10 +363,14 @@ class _PickupAddressState extends State<PickupAddress> {
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) {
+    makePostRequest();
+    // makePostRequestTracking();
     Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ViewShipments()),
-    );
+        context,
+        MaterialPageRoute(
+          builder: (context) => ViewShipments(),
+        )).then((_) => _formKey.currentState!.reset());
+
     Fluttertoast.showToast(
         msg: "Payment success",
         toastLength: Toast.LENGTH_SHORT,
@@ -345,22 +416,16 @@ class _PickupAddressState extends State<PickupAddress> {
 // Calculating Sphpping price and estimated delivery date
 
   Future<void> GetAddressFromLatLong(Position position) async {
+    //showAni = true;
     final toqueryParameters = {
       'access_key': env["ACCESS_KEY"],
-      'query': '${drop.text}',
+      'query': '${drop.text} ${toPinController.text}',
     };
-    final fromqueryParameters;
-    if (pick.text != "") {
-      fromqueryParameters = {
-        'access_key': env["ACCESS_KEY"],
-        'query': '${pick.text}',
-      };
-    } else {
-      fromqueryParameters = {
-        'access_key': env["ACCESS_KEY"],
-        'query': fromAddress,
-      };
-    }
+
+    final fromqueryParameters = {
+      'access_key': env["ACCESS_KEY"],
+      'query': '${pick.text} ${fromPinController.text}',
+    };
 
     var response = await http.get(
         Uri.http("api.positionstack.com", "/v1/forward", toqueryParameters));
@@ -421,13 +486,31 @@ class _PickupAddressState extends State<PickupAddress> {
       //print(result);
       return result;
     }
+    // double data() {
+    //   try {
+    //     distance = Geolocator.distanceBetween(fromlat, fromlong, tolat, tolong);
+    //     // distance = await Geolocator.distanceBetween(
+    //     //     13.126958, 80.2315072, 13.092798, 80.269044);
+    //     print(distance / 1000);
+    //   } catch (e) {
+    //     print(e);
+    //   }
 
-    res = data();
-    print(res);
+    //   return (distance / 1000);
+    // }
+
+    try {
+      res = data();
+
+      print(res);
+    } on Exception catch (e) {
+      print(e);
+    }
+
     int price() {
       try {
         if (num.parse(weightcontroller.text) <= 0.500) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 25;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -445,7 +528,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 0.501 &&
             num.parse(weightcontroller.text) <= 1.000) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 35;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -463,7 +546,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 1.001 &&
             num.parse(weightcontroller.text) <= 1.5) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 45;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -481,7 +564,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 1.501 &&
             num.parse(weightcontroller.text) <= 2.0) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 55;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -499,7 +582,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 2.001 &&
             num.parse(weightcontroller.text) <= 2.5) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 65;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -517,7 +600,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 2.501 &&
             num.parse(weightcontroller.text) <= 3.0) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 75;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -535,7 +618,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 3.001 &&
             num.parse(weightcontroller.text) <= 3.5) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 85;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -553,7 +636,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 3.501 &&
             num.parse(weightcontroller.text) <= 4.0) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 95;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -571,7 +654,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 4.001 &&
             num.parse(weightcontroller.text) <= 4.5) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 105;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -589,7 +672,7 @@ class _PickupAddressState extends State<PickupAddress> {
           }
         } else if (num.parse(weightcontroller.text) >= 4.501 &&
             num.parse(weightcontroller.text) <= 5.0) {
-          if (res <= 50) {
+          if (res >= 0 && res <= 50) {
             amount = 115;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -621,23 +704,15 @@ class _PickupAddressState extends State<PickupAddress> {
       } on Exception catch (e) {
         print(e);
       }
-      setState(() {});
+      setState(() {
+        amount;
+        estday;
+      });
       return amount;
     }
 
     kms = price();
     print(kms);
-    // try {
-    //   distance = await Geolocator.distanceBetween(
-    //       position.latitude, position.longitude, tolat, tolong);
-    //   // distance = await Geolocator.distanceBetween(
-    //   //     13.126958, 80.2315072, 13.092798, 80.269044);
-    //   print(distance / 1000);
-    // } catch (e) {
-    //   print(e);
-    // }
-
-    // print(distance);
 
     // Date
     try {
@@ -649,7 +724,9 @@ class _PickupAddressState extends State<PickupAddress> {
         print(thirtyDaysFromNow);
 
         // end date
-        setState(() {});
+        setState(() {
+          thirtyDaysFromNow;
+        });
       }
     } on Exception catch (e) {
       // TODO
@@ -658,6 +735,145 @@ class _PickupAddressState extends State<PickupAddress> {
   }
 
 // end of calculation of price and date
+  var ordid = generateOrderId();
+// Create Tracking shipment Api
+  Future<void> makePostRequestTracking() async {
+    final uri =
+        Uri.parse('http://reahaan.pythonanywhere.com/trackAllShipment/');
+    final headers = {'Content-Type': 'application/json'};
+    Map<String, dynamic> body = {
+      "shipment": ordid,
+    };
+    String jsonBody = json.encode(body);
+    final encoding = Encoding.getByName('utf-8');
+    var response;
+    int statusCode;
+    String responseBody;
+    try {
+      response = await http.post(
+        uri,
+        headers: headers,
+        body: jsonBody,
+        encoding: encoding,
+      );
+      statusCode = response.statusCode;
+      responseBody = response.body;
+      print(responseBody);
+      print(statusCode);
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+// End of tracking shipment api
+// Create shipment Api
+  Future<void> makePostRequest() async {
+    final uri = Uri.parse('http://reahaan.pythonanywhere.com/');
+    final headers = {'Content-Type': 'application/json'};
+    Map<String, dynamic> body = {
+      "orderId": ordid,
+      "pname": fname.text,
+      "pmobile": fmobile.text,
+      "paddress": pick.text,
+      "ppincode": fromPinController.text,
+      "pcity": fromcity.text,
+      "pstate": fromstate.text,
+      "pcountry": fromcountry.text,
+      "dname": tname.text,
+      "dmobile": tmobile.text,
+      "daddress": drop.text,
+      "dcity": tocity.text,
+      "dstate": tostate.text,
+      "dpincode": toPinController.text,
+      "dcountry": tocountry.text,
+      "productName": prodname.text,
+      "productValue": prodval.text,
+      "weight": weightcontroller.text,
+      "length": prodlen.text,
+      "width": prodwidth.text,
+      "height": prodheight.text,
+      "shippingPrice": amount,
+      "estimateDate": thirtyDaysFromNow
+    };
+    String jsonBody = json.encode(body);
+    final encoding = Encoding.getByName('utf-8');
+    var response;
+    int statusCode;
+    String responseBody;
+    try {
+      response = await http.post(
+        uri,
+        headers: headers,
+        body: jsonBody,
+        encoding: encoding,
+      );
+      statusCode = response.statusCode;
+      responseBody = response.body;
+      makePostRequestTracking();
+      print(responseBody);
+      print(statusCode);
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  // end Create shipment Api
+
+  // form validation
+// ignore: unused_element
+  void _submit() async {
+    final isValid = _formKey.currentState!.validate();
+    if (!isValid) {
+      return;
+    }
+
+    Position position = await _getGeoCostPosition();
+    GetAddressFromLatLong(position);
+
+    _formKey.currentState!.save();
+    showLoadingDialog();
+
+    if (amount != null) {
+      Timer(Duration(seconds: 3), () {
+        hideLoadingDialog();
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Estimated delivery and cost'),
+                  content: Text('Rs $amount' + '\n' + '$thirtyDaysFromNow'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, 'Cancel');
+                      },
+                      child: const Text('Back'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        try {
+                          openCheckout();
+                        } catch (e) {
+                          Fluttertoast.showToast(
+                              msg: "Something went wrong, Please try later",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+
+                        Navigator.pop(context, 'OK');
+                      },
+                      child: const Text('Create shipment'),
+                    ),
+                  ],
+                ));
+      });
+    }
+  }
+
+  // end form validation
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -674,8 +890,10 @@ class _PickupAddressState extends State<PickupAddress> {
               style: TextStyle(fontSize: 20.0),
             ),
           ),
+
           TextFormField(
             initialValue: generateOrderId(),
+            //controller: order.text,
             readOnly: true,
             decoration: const InputDecoration(
               icon: const Icon(Icons.person),
@@ -684,37 +902,51 @@ class _PickupAddressState extends State<PickupAddress> {
             ),
           ),
 
-          Text('${fromAddress}'),
+          //Text('${fromAddress}'),
 
           Row(
             children: [
               ElevatedButton(
                   onPressed: () async {
+                    showLoadingDialog();
                     Position position = await _getGeoCostPosition();
                     Cost =
                         'Lat: ${position.latitude} , Long: ${position.longitude}';
                     getCurrentAddress(position);
+                    Timer(Duration(seconds: 3), () {
+                      hideLoadingDialog();
+                    });
                   },
                   child: Text('Get current location')),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 35)),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 15)),
               ElevatedButton(
                   onPressed: () {
-                    fromAddress = "";
+                    //fromAddress = "";
+                    pick.text = fromPinController.text =
+                        fromcity.text = fromstate.text = fromcountry.text = "";
                     _isEnable = true;
                     setState(() {});
                   },
-                  child: Text("Clear")),
+                  child: Text("Clear pickup Address")),
             ],
           ),
 
           TextFormField(
+            controller: fname,
             decoration: const InputDecoration(
               icon: const Icon(Icons.person),
               //hintText: 'Door no and Street Name',
               labelText: 'Name',
             ),
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Name should not be empty!';
+              }
+              return null;
+            },
           ),
           TextFormField(
+            controller: fmobile,
             inputFormatters: [
               LengthLimitingTextInputFormatter(10),
             ],
@@ -801,13 +1033,21 @@ class _PickupAddressState extends State<PickupAddress> {
             ),
           ),
           TextFormField(
+            controller: tname,
             decoration: const InputDecoration(
               icon: const Icon(Icons.person),
               //hintText: 'Door no and Street Name',
               labelText: 'Name',
             ),
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Name should not be empty!';
+              }
+              return null;
+            },
           ),
           TextFormField(
+            controller: tmobile,
             validator: (value) {
               return value!.length < 10 ? 'Mobile must be of length 10' : null;
             },
@@ -833,8 +1073,12 @@ class _PickupAddressState extends State<PickupAddress> {
           TextFormField(
             controller: toPinController,
             onFieldSubmitted: (String str) {
+              showLoadingDialog();
               setState(() {
                 getToPincodeData();
+              });
+              Timer(Duration(seconds: 3), () {
+                hideLoadingDialog();
               });
             },
             validator: (value) {
@@ -884,18 +1128,33 @@ class _PickupAddressState extends State<PickupAddress> {
             child: Text("Product Detail", style: TextStyle(fontSize: 20.0)),
           ),
           TextFormField(
+            controller: prodname,
             decoration: const InputDecoration(
               icon: const Icon(Icons.topic),
               //hintText: 'Country',
               labelText: 'Product Name',
             ),
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Product name should not be empty!';
+              }
+              return null;
+            },
           ),
           TextFormField(
+            controller: prodval,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: const InputDecoration(
               icon: const Icon(Icons.price_change),
               //hintText: 'Country',
               labelText: 'Value of Product',
             ),
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Product value should not be empty!';
+              }
+              return null;
+            },
           ),
           TextFormField(
             controller: weightcontroller,
@@ -905,18 +1164,31 @@ class _PickupAddressState extends State<PickupAddress> {
               //hintText: 'Mobile No',
               labelText: 'Weight (Kg)',
             ),
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Product weight should not be empty!';
+              }
+              return null;
+            },
           ),
           new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               new Flexible(
                 child: new TextFormField(
+                  controller: prodlen,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   decoration: InputDecoration(
                     icon: const Icon(Icons.add_chart),
                     contentPadding: EdgeInsets.all(10),
-                    labelText: 'L',
+                    labelText: 'L (cm)',
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Length should not be empty!';
+                    }
+                    return null;
+                  },
                 ),
               ),
               SizedBox(
@@ -924,24 +1196,40 @@ class _PickupAddressState extends State<PickupAddress> {
               ),
               new Flexible(
                 child: new TextFormField(
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(10),
-                      labelText: 'W',
-                    )),
+                  controller: prodwidth,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(10),
+                    labelText: 'W (cm)',
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Width should not be empty!';
+                    }
+                    return null;
+                  },
+                ),
               ),
               SizedBox(
                 width: 20.0,
               ),
               new Flexible(
                 child: new TextFormField(
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(10),
-                      labelText: 'Height',
-                    )),
+                  controller: prodheight,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(10),
+                    labelText: 'H (cm)',
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Height should not be empty!';
+                    }
+                    return null;
+                  },
+                ),
               ),
             ],
           ),
@@ -979,55 +1267,77 @@ class _PickupAddressState extends State<PickupAddress> {
           //     ))
           //   ],
           // ),
+          //  Navigator.push(
+          //             context,
+          //             MaterialPageRoute(builder: (context) => Payment()))
+
           new Container(
             child: Padding(
               padding: const EdgeInsets.only(left: 150.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  Position position = await _getGeoCostPosition();
-                  GetAddressFromLatLong(position);
+                  _submit();
+                  // Position position = await _getGeoCostPosition();
+                  // GetAddressFromLatLong(position);
 
-                  if (await amount != null) {
-                    showDialog<String>(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Estimated delivery and cost'),
-                              content: Text(
-                                  'Rs $amount' + '\n' + '$thirtyDaysFromNow'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, 'Cancel'),
-                                  child: const Text('Back'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    try {
-                                      openCheckout();
-                                    } catch (e) {
-                                      Fluttertoast.showToast(
-                                          msg:
-                                              "Something went wrong, Please try later",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 4,
-                                          backgroundColor: Colors.red,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0);
-                                    }
+                  //   showLoadingDialog();
 
-                                    Navigator.pop(context, 'OK');
-                                  },
-                                  child: const Text('Create shipment'),
-                                ),
-                              ],
-                            ));
-                  }
+                  //   if (amount != null) {
+                  //     hideLoadingDialog();
+                  //     showDialog<String>(
+                  //         context: context,
+                  //         builder: (BuildContext context) => AlertDialog(
+                  //               title: const Text('Estimated delivery and cost'),
+                  //               content: Text(
+                  //                   'Rs $amount' + '\n' + '$thirtyDaysFromNow'),
+                  //               actions: <Widget>[
+                  //                 TextButton(
+                  //                   onPressed: () {
+                  //                     showAni = false;
+                  //                     print(showAni);
+                  //                     setState(() {});
+                  //                     Navigator.pop(context, 'Cancel');
+                  //                   },
+                  //                   child: const Text('Back'),
+                  //                 ),
+                  //                 TextButton(
+                  //                   onPressed: () {
+                  //                     try {
+                  //                       openCheckout();
+                  //                     } catch (e) {
+                  //                       Fluttertoast.showToast(
+                  //                           msg:
+                  //                               "Something went wrong, Please try later",
+                  //                           toastLength: Toast.LENGTH_SHORT,
+                  //                           gravity: ToastGravity.CENTER,
+                  //                           timeInSecForIosWeb: 4,
+                  //                           backgroundColor: Colors.red,
+                  //                           textColor: Colors.white,
+                  //                           fontSize: 16.0);
+                  //                     }
+
+                  //                     Navigator.pop(context, 'OK');
+                  //                   },
+                  //                   child: const Text('Create shipment'),
+                  //                 ),
+                  //               ],
+                  //             ));
+                  //  }
                 },
                 child: const Text('Proceed'),
               ),
             ),
           ),
+
+          // new Container(
+          //   child: ElevatedButton(
+          //     child: Text("create"),
+          //     onPressed: () {
+          //       makePostRequest();
+          //     },
+          //   ),
+          // ),
+
           // new Container(
           //     padding: const EdgeInsets.only(left: 150.0, top: 20.0),
           //     child: new ElevatedButton(

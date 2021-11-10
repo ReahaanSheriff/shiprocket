@@ -1,5 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:load/load.dart';
 import 'package:shipping/views/eachshipment.dart';
+import 'package:http/http.dart' as http;
 
 class ViewShipments extends StatefulWidget {
   const ViewShipments({Key? key}) : super(key: key);
@@ -9,6 +14,36 @@ class ViewShipments extends StatefulWidget {
 }
 
 class _ViewShipmentsState extends State<ViewShipments> {
+  var orderid;
+  var jsonData;
+  var response;
+  viewAllShipment() async {
+    try {
+      response =
+          await http.get(Uri.parse('http://reahaan.pythonanywhere.com/'));
+      jsonData = jsonDecode(response.body);
+      // for (var i in jsonData) {
+      //   print(i);
+      // }
+      setState(() {
+        response;
+        jsonData;
+      });
+      orderid = jsonData[0]["orderId"];
+    } on Exception catch (e) {
+      // TODO
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    viewAllShipment();
+    Timer(Duration(seconds: 1), () {
+      hideLoadingDialog();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,45 +57,54 @@ class _ViewShipmentsState extends State<ViewShipments> {
               padding: const EdgeInsets.all(12),
               children: <Widget>[
                 Padding(padding: EdgeInsets.only(top: 10)),
-                Container(
-                  height: 100,
-                  child: Card(
-                      child: ListTile(
-                          contentPadding: EdgeInsets.all(10),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EachShipment()),
-                            );
-                          },
-                          title: Text("Order ID" + " 12345677890"),
-                          subtitle: Container(
-                            child: Column(
-                              children: [
-                                Row(
+                if (jsonData != null)
+                  for (var i in jsonData)
+                    Container(
+                      height: 100,
+                      child: Card(
+                          child: ListTile(
+                              contentPadding: EdgeInsets.all(10),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EachShipment(value: i["orderId"])),
+                                );
+                              },
+                              // ignore: unnecessary_brace_in_string_interps
+                              title: Text("Order ID-" + ' ${i["orderId"]}'),
+                              subtitle: Container(
+                                child: Column(
                                   children: [
-                                    Padding(padding: EdgeInsets.only(top: 40)),
-                                    Text("10/10/21"),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            right: 15, top: 10)),
-                                    Text("Rs. 500"),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            right: 15, top: 10)),
-                                    Text("Dispatched")
+                                    Row(
+                                      children: [
+                                        Padding(
+                                            padding: EdgeInsets.only(top: 40)),
+                                        Text("${i['created']}"
+                                                .substring(8, 10) +
+                                            "${i['created']}".substring(4, 8) +
+                                            "${i['created']}".substring(0, 4)),
+                                        Padding(
+                                            padding: EdgeInsets.only(
+                                                right: 15, top: 10)),
+                                        Text("Rs. ${i['productValue']}"),
+                                        Padding(
+                                            padding: EdgeInsets.only(
+                                                right: 15, top: 10)),
+                                        Text("pin ${i['dpincode']}")
+                                      ],
+                                    ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          leading: Icon(
-                            Icons.assignment_rounded,
-                            size: 40,
-                          ),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined))),
-                ),
+                              ),
+                              leading: Icon(
+                                Icons.assignment_rounded,
+                                size: 40,
+                              ),
+                              trailing:
+                                  Icon(Icons.arrow_forward_ios_outlined))),
+                    ),
                 Padding(padding: EdgeInsets.only(top: 10)),
               ],
             ),

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:load/load.dart';
 import 'package:shipping/services/auth.dart';
 import 'package:shipping/views/home.dart';
 
@@ -86,18 +89,28 @@ class _LoginFormState extends State<LoginForm> {
                   try {
                     AuthMethods().login(email, password).then((value) async {
                       User? user = FirebaseAuth.instance.currentUser;
-                      if (user != null) {
+
+                      if (user != null && value == "Logged in") {
                         Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: (context) => Home()));
+                        Fluttertoast.showToast(
+                            msg: "Logged In successfully",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.green,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Invalid Credentials",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
                       }
-                      Fluttertoast.showToast(
-                          msg: "Logged In successfully",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 4,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
                     });
                   } on Exception catch (e) {
                     Fluttertoast.showToast(
@@ -148,6 +161,7 @@ class _LoginFormState extends State<LoginForm> {
             child: Center(
                 child: InkWell(
               onTap: () {
+                showLoadingDialog();
                 AuthMethods().signInWithGoogle(context);
               },
               child: Ink(

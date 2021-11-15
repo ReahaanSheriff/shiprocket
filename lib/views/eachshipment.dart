@@ -10,10 +10,12 @@ import 'package:timeline_tile/timeline_tile.dart';
 
 class EachShipment extends StatefulWidget {
   final String value;
+  final String token;
 
   const EachShipment({
     Key? key,
     required this.value,
+    required this.token,
   }) : super(key: key);
 
   @override
@@ -52,8 +54,8 @@ class _EachShipmentState extends State<EachShipment> {
               )),
           body: TabBarView(
             children: [
-              OrderDetails(data: widget.value),
-              Tracking(data: widget.value),
+              OrderDetails(data: widget.value, token: widget.token),
+              Tracking(data: widget.value, token: widget.token),
             ],
           ),
         ),
@@ -64,10 +66,9 @@ class _EachShipmentState extends State<EachShipment> {
 
 class OrderDetails extends StatefulWidget {
   final String data;
-  const OrderDetails({
-    Key? key,
-    required this.data,
-  }) : super(key: key);
+  final String token;
+  const OrderDetails({Key? key, required this.data, required this.token})
+      : super(key: key);
 
   @override
   _OrderDetailsState createState() => _OrderDetailsState();
@@ -77,51 +78,100 @@ class _OrderDetailsState extends State<OrderDetails> {
   var tjsonData;
   var tresponse;
   var vresponse, vjsonData;
-  viewAllShipment() async {
+
+  viewOneShipment() async {
+    final uri = Uri.parse(
+        'http://reahaan.pythonanywhere.com/getshipment/${widget.data}');
+
+    final headers = {'Authorization': 'Token ' + widget.token.toString()};
     try {
-      vresponse = await http.get(Uri.parse(
-          'http://reahaan.pythonanywhere.com/getshipment/${widget.data}'));
+      vresponse = await http.get(
+        uri,
+        headers: headers,
+      );
+      //statusCode = vresponse.statusCode;
       vjsonData = jsonDecode(vresponse.body);
-      //print(jsonData);
+
+      print(vjsonData);
       setState(() {
         vresponse;
         vjsonData;
       });
+      //print(statusCode);
     } on Exception catch (e) {
-      // TODO
-      print(e);
+      print("error on login function");
     }
   }
 
   bool scheduled = true;
   bool outforpickup = false;
-
+  bool cancelled = false;
   bool pickedup = false;
   bool transit = false;
   bool outfordelivery = false;
   bool delivered = false;
   var status;
-  TrackOneShipment() async {
-    try {
-      tresponse = await http.get(Uri.parse(
-          'http://reahaan.pythonanywhere.com/trackOneShipment/${widget.data}'));
-      tjsonData = jsonDecode(tresponse.body);
-      //print(jsonData);
 
+  updateCancelTracking() async {
+    final uri = Uri.parse(
+        'http://reahaan.pythonanywhere.com/updateTracking/${widget.data}');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token ' + widget.data.toString()
+    };
+    Map<String, dynamic> body = {
+      "cancelled": true,
+    };
+    String jsonBody = json.encode(body);
+    var response;
+
+    String responseBody;
+    try {
+      response = await http.put(
+        uri,
+        headers: headers,
+        body: jsonBody,
+      );
+
+      responseBody = response.body;
+
+      print(responseBody);
+
+      //print(statusCode);
+    } on Exception catch (e) {
+      print("error on login function");
+    }
+  }
+
+  trackOneShipment() async {
+    final uri = Uri.parse(
+        'http://reahaan.pythonanywhere.com/trackOneShipment/${widget.data}');
+
+    final headers = {'Authorization': 'Token ' + widget.data.toString()};
+    try {
+      tresponse = await http.get(
+        uri,
+        headers: headers,
+      );
+      //statusCode = response.statusCode;
+      tjsonData = jsonDecode(tresponse.body);
+
+      print(tjsonData);
       setState(() {
         tresponse;
         tjsonData;
-
         scheduled = tjsonData['pickScheduled'];
+        cancelled = tjsonData['cancelled'];
         outforpickup = tjsonData['outForPickup'];
         pickedup = tjsonData['pickedUp'];
         transit = tjsonData['transit'];
         outfordelivery = tjsonData['outForDelivery'];
         delivered = tjsonData['delivered'];
       });
+      //print(statusCode);
     } on Exception catch (e) {
-      // TODO
-      print(e);
+      print("error on login function");
     }
   }
 
@@ -144,7 +194,8 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   @override
   void initState() {
-    viewAllShipment();
+    trackOneShipment();
+    viewOneShipment();
     showLoadingDialog();
     Timer(Duration(seconds: 1), () {
       hideLoadingDialog();
@@ -422,10 +473,19 @@ class _OrderDetailsState extends State<OrderDetails> {
           ),
           new Container(
             child: ElevatedButton(
-              child: Text("Cancel Shipment"),
+              child: Text("Update Shipment"),
               onPressed: () {},
             ),
           ),
+          if (cancelled == false && outforpickup == false)
+            new Container(
+              child: ElevatedButton(
+                child: Text("Cancel Shipment"),
+                onPressed: () {
+                  updateCancelTracking();
+                },
+              ),
+            ),
         ])),
     ]));
   }
@@ -433,9 +493,11 @@ class _OrderDetailsState extends State<OrderDetails> {
 
 class Tracking extends StatefulWidget {
   final String data;
+  final String token;
   const Tracking({
     Key? key,
     required this.data,
+    required this.token,
   }) : super(key: key);
 
   @override
@@ -451,52 +513,69 @@ class _TrackingState extends State<Tracking> {
   bool transit = false;
   bool outfordelivery = false;
   bool delivered = false;
+  bool cancelled = false;
 
   var vresponse, vjsonData, est;
-  viewAllShipment() async {
+  viewOneShipment() async {
+    final uri = Uri.parse(
+        'http://reahaan.pythonanywhere.com/getshipment/${widget.data}');
+
+    final headers = {'Authorization': 'Token ' + widget.token.toString()};
     try {
-      vresponse = await http.get(Uri.parse(
-          'http://reahaan.pythonanywhere.com/getshipment/${widget.data}'));
+      vresponse = await http.get(
+        uri,
+        headers: headers,
+      );
+      //statusCode = response.statusCode;
       vjsonData = jsonDecode(vresponse.body);
-      //print(jsonData);
+
+      print(vjsonData);
       setState(() {
         vresponse;
         vjsonData;
         est = vjsonData["estimateDate"];
       });
+      //print(statusCode);
     } on Exception catch (e) {
-      // TODO
       print(e);
     }
   }
 
-  TrackOneShipment() async {
-    try {
-      response = await http.get(Uri.parse(
-          'http://reahaan.pythonanywhere.com/trackOneShipment/${widget.data}'));
-      jsonData = jsonDecode(response.body);
-      //print(jsonData);
+  trackOneShipment() async {
+    final uri = Uri.parse(
+        'http://reahaan.pythonanywhere.com/trackOneShipment/${widget.data}');
 
+    final headers = {'Authorization': 'Token ' + widget.token.toString()};
+    try {
+      response = await http.get(
+        uri,
+        headers: headers,
+      );
+      //statusCode = response.statusCode;
+      jsonData = jsonDecode(response.body);
+
+      print(jsonData);
       setState(() {
         response;
         jsonData;
         scheduled = jsonData['pickScheduled'];
+        cancelled = jsonData['cancelled'];
         outforpickup = jsonData['outForPickup'];
         pickedup = jsonData['pickedUp'];
         transit = jsonData['transit'];
         outfordelivery = jsonData['outForDelivery'];
         delivered = jsonData['delivered'];
       });
+      //print(statusCode);
     } on Exception catch (e) {
-      // TODO
-      print(e);
+      print("error on login function");
     }
   }
 
   @override
   void initState() {
-    TrackOneShipment();
-    viewAllShipment();
+    trackOneShipment();
+    viewOneShipment();
     showLoadingDialog();
     Timer(Duration(seconds: 1), () {
       hideLoadingDialog();
@@ -557,7 +636,7 @@ class _TrackingState extends State<Tracking> {
                     ),
                   ),
                 ),
-              if (outforpickup == true)
+              if (outforpickup == true && cancelled == false)
                 TimelineTile(
                   //alignment: TimelineAlign.center,
                   isFirst: false,
@@ -598,7 +677,7 @@ class _TrackingState extends State<Tracking> {
                     ),
                   ),
                 ),
-              if (pickedup == true)
+              if (pickedup == true && cancelled == false)
                 TimelineTile(
                   //alignment: TimelineAlign.center,
                   isFirst: false,
@@ -639,7 +718,7 @@ class _TrackingState extends State<Tracking> {
                     ),
                   ),
                 ),
-              if (transit == true)
+              if (transit == true && cancelled == false)
                 TimelineTile(
                   //alignment: TimelineAlign.center,
                   isFirst: false,
@@ -680,7 +759,7 @@ class _TrackingState extends State<Tracking> {
                     ),
                   ),
                 ),
-              if (outfordelivery == true)
+              if (outfordelivery == true && cancelled == false)
                 TimelineTile(
                   //alignment: TimelineAlign.center,
                   isFirst: false,
@@ -721,7 +800,7 @@ class _TrackingState extends State<Tracking> {
                     ),
                   ),
                 ),
-              if (delivered == true)
+              if (delivered == true && cancelled == false)
                 TimelineTile(
                   //alignment: TimelineAlign.center,
                   isLast: true,
@@ -754,6 +833,47 @@ class _TrackingState extends State<Tracking> {
                               ),
                               Text(
                                   "\tOrder Delivered \n\n Your order has been Delivered"),
+                            ],
+                          )
+                        ],
+                      ),
+                      //color: Colors.amberAccent,
+                    ),
+                  ),
+                ),
+              if (cancelled == true)
+                TimelineTile(
+                  //alignment: TimelineAlign.center,
+                  isLast: true,
+                  indicatorStyle: IndicatorStyle(
+                    width: 40,
+                    color: Colors.blue,
+                    //indicatorXY: ,
+                    //padding: const EdgeInsets.all(8),
+                    // iconStyle: IconStyle(
+                    //   color: Colors.white,
+                    //   iconData: Icons.insert_emoticon,
+                    // ),
+                  ),
+
+                  endChild: Padding(
+                    padding: const EdgeInsets.only(right: 15.0, left: 10),
+                    child: Container(
+                      constraints: const BoxConstraints(
+                        minHeight: 100,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Image.network(
+                                "https://img.lovepik.com/element/45007/0498.png_860.png",
+                                width: 70,
+                                height: 80,
+                                alignment: Alignment.bottomLeft,
+                              ),
+                              Text(
+                                  "\tOrder Cancelled \n\n Your order has been Cancelled"),
                             ],
                           )
                         ],

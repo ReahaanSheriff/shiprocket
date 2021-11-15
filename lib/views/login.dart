@@ -1,10 +1,12 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
+import 'package:shipping/main.dart';
 import 'package:shipping/services/auth.dart';
 import 'package:shipping/views/home.dart';
 
@@ -35,9 +37,49 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  var emailcontroller = new TextEditingController();
+  var usernamecontroller = new TextEditingController();
   var passwordcontroller = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  var responsebody;
+  var token, statusCode;
+  login() async {
+    final uri = Uri.parse('http://reahaan.pythonanywhere.com/login/');
+    final headers = {'Content-Type': 'application/json'};
+    // final headers = {
+    //   'Authorization':
+    //       'Token 1aaa6956c65f9a2c28453ccd20cf78f9857cb14a3acaf2cb6307e0c0b827f886'
+    // };
+
+    Map<String, dynamic> body = {
+      "username": usernamecontroller.text,
+      "password": passwordcontroller.text,
+    };
+    String jsonBody = json.encode(body);
+    final encoding = Encoding.getByName('utf-8');
+    var response;
+
+    try {
+      response = await http.post(
+        uri,
+        headers: headers,
+        body: jsonBody,
+        encoding: encoding,
+      );
+      statusCode = response.statusCode;
+      responsebody = jsonDecode(response.body);
+
+      print(responsebody);
+      setState(() {
+        token = responsebody["token"];
+      });
+      print(token);
+      //print(statusCode);
+    } on Exception catch (e) {
+      print("error on login function");
+    }
+    return statusCode;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -45,11 +87,11 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         children: [
           TextFormField(
-            controller: emailcontroller,
+            controller: usernamecontroller,
             decoration: const InputDecoration(
               icon: const Icon(Icons.person),
               //hintText: 'Door no and Street Name',
-              labelText: 'Email',
+              labelText: 'Username',
             ),
           ),
           TextFormField(
@@ -63,7 +105,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
           ElevatedButton(
               onPressed: () {
-                final String email = emailcontroller.text.trim();
+                final String email = usernamecontroller.text.trim();
                 final String password = passwordcontroller.text.trim();
                 if (email.isEmpty) {
                   Fluttertoast.showToast(
@@ -87,31 +129,59 @@ class _LoginFormState extends State<LoginForm> {
                   print("Password field is empty");
                 } else {
                   try {
-                    AuthMethods().login(email, password).then((value) async {
-                      User? user = FirebaseAuth.instance.currentUser;
-
-                      if (user != null && value == "Logged in") {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => Home()));
+                    login().then((value) {
+                      if (value == 201) {
                         Fluttertoast.showToast(
-                            msg: "Logged In successfully",
+                            msg: "Logged in Successfully",
                             toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
+                            gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 4,
                             backgroundColor: Colors.green,
                             textColor: Colors.white,
                             fontSize: 16.0);
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Home(value: token)));
                       } else {
                         Fluttertoast.showToast(
                             msg: "Invalid Credentials",
                             toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
+                            gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 4,
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
                             fontSize: 16.0);
                       }
                     });
+
+                    // start Firebase auth
+                    // AuthMethods().login(email, password).then((value) async {
+                    //   User? user = FirebaseAuth.instance.currentUser;
+
+                    //   if (user != null && value == "Logged in") {
+                    //     Navigator.pushReplacement(context,
+                    //         MaterialPageRoute(builder: (context) => Home()));
+                    //     Fluttertoast.showToast(
+                    //         msg: "Logged In successfully",
+                    //         toastLength: Toast.LENGTH_SHORT,
+                    //         gravity: ToastGravity.CENTER,
+                    //         timeInSecForIosWeb: 4,
+                    //         backgroundColor: Colors.green,
+                    //         textColor: Colors.white,
+                    //         fontSize: 16.0);
+                    //   } else {
+                    //     Fluttertoast.showToast(
+                    //         msg: "Invalid Credentials",
+                    //         toastLength: Toast.LENGTH_SHORT,
+                    //         gravity: ToastGravity.CENTER,
+                    //         timeInSecForIosWeb: 4,
+                    //         backgroundColor: Colors.red,
+                    //         textColor: Colors.white,
+                    //         fontSize: 16.0);
+                    //   }
+                    // });
+                    // end Firebase auth
                   } on Exception catch (e) {
                     Fluttertoast.showToast(
                         msg: "Invalid Credentials",
@@ -161,8 +231,8 @@ class _LoginFormState extends State<LoginForm> {
             child: Center(
                 child: InkWell(
               onTap: () {
-                showLoadingDialog();
-                AuthMethods().signInWithGoogle(context);
+                // showLoadingDialog();
+                // AuthMethods().signInWithGoogle(context);
               },
               child: Ink(
                 color: Color(0xFF4285F4),

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
 import 'package:shipping/helperfunctions/sharedpref_helper.dart';
@@ -16,7 +16,11 @@ import 'package:shipping/views/cost.dart';
 import 'package:vector_math/vector_math.dart' as vec;
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  final String value;
+  const Home({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -26,6 +30,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     // TODO: implement initState
+    print(widget.value);
     super.initState();
     hideLoadingDialog();
   }
@@ -129,7 +134,8 @@ class _HomeState extends State<Home> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => CreateShipment()),
+                                      builder: (context) => CreateShipment(
+                                          value: widget.value.toString())),
                                 );
                                 hideLoadingDialog();
                               });
@@ -155,7 +161,8 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ViewShipments()),
+                                    builder: (context) =>
+                                        ViewShipments(value: widget.value)),
                               );
                             },
                             title: Text("View Shipments"),
@@ -197,7 +204,8 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Profile()),
+                                    builder: (context) =>
+                                        Profile(value: widget.value)),
                               );
                             },
                             // onTap: () {

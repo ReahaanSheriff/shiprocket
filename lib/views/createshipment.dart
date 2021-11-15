@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -29,7 +29,11 @@ String generateOrderId() {
 }
 
 class CreateShipment extends StatefulWidget {
-  const CreateShipment({Key? key}) : super(key: key);
+  final String value;
+  const CreateShipment({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
 
   @override
   _CreateShipmentState createState() => _CreateShipmentState();
@@ -45,7 +49,7 @@ class _CreateShipmentState extends State<CreateShipment> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Container(child: PickupAddress()),
+              Container(child: PickupAddress(value: widget.value)),
             ],
           ),
         ));
@@ -53,7 +57,11 @@ class _CreateShipmentState extends State<CreateShipment> {
 }
 
 class PickupAddress extends StatefulWidget {
-  const PickupAddress({Key? key}) : super(key: key);
+  final String value;
+  const PickupAddress({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
   @override
   _PickupAddressState createState() => _PickupAddressState();
 }
@@ -85,7 +93,7 @@ class _PickupAddressState extends State<PickupAddress>
   var fromPinController = new TextEditingController();
   var pick = new TextEditingController();
   var drop = new TextEditingController();
-
+  var responseBody;
   var fromAddress = "",
       tolat,
       tolong,
@@ -103,7 +111,10 @@ class _PickupAddressState extends State<PickupAddress>
       fstate,
       fcountry,
       thirtyDaysFromNow,
-      distance;
+      distance,
+      currentuser_response,
+      uid;
+
   // double count = 0;
 
   // double getPrice() {
@@ -331,6 +342,7 @@ class _PickupAddressState extends State<PickupAddress>
   @override
   void initState() {
     super.initState();
+    currentUser();
     razorpay = new Razorpay();
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
@@ -364,12 +376,11 @@ class _PickupAddressState extends State<PickupAddress>
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) {
     makePostRequest();
-    // makePostRequestTracking();
+    //makePostRequestTracking();
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ViewShipments(),
-        )).then((_) => _formKey.currentState!.reset());
+            builder: (context) => ViewShipments(value: widget.value)));
 
     Fluttertoast.showToast(
         msg: "Payment success",
@@ -382,10 +393,10 @@ class _PickupAddressState extends State<PickupAddress>
   }
 
   void handlerErrorFailure() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreateShipment()),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) =>  Home(value: widget.value)),
+    // );
     Fluttertoast.showToast(
         msg: "Payment Failure",
         toastLength: Toast.LENGTH_SHORT,
@@ -397,10 +408,10 @@ class _PickupAddressState extends State<PickupAddress>
   }
 
   void handlerExternalWallet() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Home()),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => Home(value: token)),
+    // );
     Fluttertoast.showToast(
         msg: "handler External Wallet function",
         toastLength: Toast.LENGTH_SHORT,
@@ -736,16 +747,20 @@ class _PickupAddressState extends State<PickupAddress>
 
 // end of calculation of price and date
   var ordid = generateOrderId();
+
 // Create Tracking shipment Api
   Future<void> makePostRequestTracking() async {
     final uri =
         Uri.parse('http://reahaan.pythonanywhere.com/trackAllShipment/');
-    final headers = {'Content-Type': 'application/json'};
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token ' + widget.value.toString()
+    };
     Map<String, dynamic> body = {
       "shipment": ordid,
     };
     String jsonBody = json.encode(body);
-    final encoding = Encoding.getByName('utf-8');
+    //final encoding = Encoding.getByName('utf-8');
     var response;
     int statusCode;
     String responseBody;
@@ -754,7 +769,7 @@ class _PickupAddressState extends State<PickupAddress>
         uri,
         headers: headers,
         body: jsonBody,
-        encoding: encoding,
+        //encoding: encoding,
       );
       statusCode = response.statusCode;
       responseBody = response.body;
@@ -765,13 +780,50 @@ class _PickupAddressState extends State<PickupAddress>
     }
   }
 
-// End of tracking shipment api
+// End of tracking all shipment api
+
+// Get Current User
+
+  currentUser() async {
+    final uri = Uri.parse('http://reahaan.pythonanywhere.com/currentuser/');
+    final headers = {'Authorization': 'Token ' + widget.value.toString()};
+//String jsonBody = json.encode(body);
+    //final encoding = Encoding.getByName('utf-8');
+
+    try {
+      currentuser_response = await http.get(
+        uri,
+        headers: headers,
+        //body: jsonBody,
+        //encoding: encoding,
+      );
+
+      responseBody = jsonDecode(currentuser_response.body);
+      print(responseBody['id']);
+      print(responseBody);
+      setState(() {
+        uid = responseBody['id'];
+      });
+      //print(responseBody['id']);
+    } on Exception catch (e) {
+      print(e);
+    }
+    return responseBody['id'];
+  }
+
+// End of current user
 // Create shipment Api
-  Future<void> makePostRequest() async {
+
+  makePostRequest() async {
     final uri = Uri.parse('http://reahaan.pythonanywhere.com/');
-    final headers = {'Content-Type': 'application/json'};
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token ' + widget.value.toString()
+    };
+
     Map<String, dynamic> body = {
       "orderId": ordid,
+      "user_id_id": uid,
       "pname": fname.text,
       "pmobile": fmobile.text,
       "paddress": pick.text,
@@ -795,11 +847,11 @@ class _PickupAddressState extends State<PickupAddress>
       "shippingPrice": amount,
       "estimateDate": thirtyDaysFromNow
     };
-    String jsonBody = json.encode(body);
+    var jsonBody = json.encode(body);
     final encoding = Encoding.getByName('utf-8');
     var response;
-    int statusCode;
-    String responseBody;
+    var statusCode;
+    var responseBody;
     try {
       response = await http.post(
         uri,
@@ -808,7 +860,9 @@ class _PickupAddressState extends State<PickupAddress>
         encoding: encoding,
       );
       statusCode = response.statusCode;
-      responseBody = response.body;
+      responseBody = jsonDecode(response.body);
+      //print("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+      //print('userid ' + '$uid');
       makePostRequestTracking();
       print(responseBody);
       print(statusCode);
@@ -833,44 +887,42 @@ class _PickupAddressState extends State<PickupAddress>
     _formKey.currentState!.save();
     showLoadingDialog();
 
-    if (amount != null) {
-      Timer(Duration(seconds: 3), () {
-        hideLoadingDialog();
-        showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                  title: const Text('Estimated delivery and cost'),
-                  content: Text('Rs $amount' + '\n' + '$thirtyDaysFromNow'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context, 'Cancel');
-                      },
-                      child: const Text('Back'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        try {
-                          openCheckout();
-                        } catch (e) {
-                          Fluttertoast.showToast(
-                              msg: "Something went wrong, Please try later",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 4,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                        }
+    Timer(Duration(seconds: 3), () {
+      hideLoadingDialog();
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text('Estimated delivery and cost'),
+                content: Text('Rs $amount' + '\n' + '$thirtyDaysFromNow'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, 'Cancel');
+                    },
+                    child: const Text('Back'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      try {
+                        openCheckout();
+                      } catch (e) {
+                        Fluttertoast.showToast(
+                            msg: "Something went wrong, Please try later",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      }
 
-                        Navigator.pop(context, 'OK');
-                      },
-                      child: const Text('Create shipment'),
-                    ),
-                  ],
-                ));
-      });
-    }
+                      Navigator.pop(context, 'OK');
+                    },
+                    child: const Text('Create shipment'),
+                  ),
+                ],
+              ));
+    });
   }
 
   // end form validation
@@ -892,7 +944,7 @@ class _PickupAddressState extends State<PickupAddress>
           ),
 
           TextFormField(
-            initialValue: generateOrderId(),
+            initialValue: ordid,
             //controller: order.text,
             readOnly: true,
             decoration: const InputDecoration(
@@ -1167,6 +1219,8 @@ class _PickupAddressState extends State<PickupAddress>
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Product weight should not be empty!';
+              } else if (int.parse(value) > 5) {
+                return 'Product weight should not be greater than 5';
               }
               return null;
             },
@@ -1331,9 +1385,9 @@ class _PickupAddressState extends State<PickupAddress>
 
           // new Container(
           //   child: ElevatedButton(
-          //     child: Text("create"),
+          //     child: Text("current user"),
           //     onPressed: () {
-          //       makePostRequest();
+          //       currentUser();
           //     },
           //   ),
           // ),

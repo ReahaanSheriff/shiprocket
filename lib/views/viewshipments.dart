@@ -2,12 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
 import 'package:shipping/views/eachshipment.dart';
 import 'package:http/http.dart' as http;
 
 class ViewShipments extends StatefulWidget {
-  const ViewShipments({Key? key}) : super(key: key);
+  final String value;
+  const ViewShipments({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
 
   @override
   _ViewShipmentsState createState() => _ViewShipmentsState();
@@ -17,28 +22,50 @@ class _ViewShipmentsState extends State<ViewShipments> {
   var orderid;
   var jsonData;
   var response;
+  var statusCode;
+
   viewAllShipment() async {
+    final uri = Uri.parse('http://reahaan.pythonanywhere.com/userShipment/');
+
+    final headers = {'Authorization': 'Token ' + widget.value.toString()};
     try {
-      response =
-          await http.get(Uri.parse('http://reahaan.pythonanywhere.com/'));
+      response = await http.get(
+        uri,
+        headers: headers,
+      );
+      statusCode = response.statusCode;
       jsonData = jsonDecode(response.body);
-      // for (var i in jsonData) {
-      //   print(i);
-      // }
+
+      print(jsonData);
       setState(() {
-        response;
         jsonData;
       });
-      orderid = jsonData[0]["orderId"];
+      //print(statusCode);
     } on Exception catch (e) {
-      // TODO
-      print(e);
+      print("error on login function");
+    }
+    if (jsonData == null) {
+      orderid = null;
+    } else {
+      orderid = jsonData[0]["orderId"];
     }
   }
 
   @override
   void initState() {
-    viewAllShipment();
+    try {
+      viewAllShipment();
+    } on Exception catch (e) {
+      Fluttertoast.showToast(
+          msg: "No shipments",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+
     Timer(Duration(seconds: 1), () {
       hideLoadingDialog();
     });
@@ -68,8 +95,9 @@ class _ViewShipmentsState extends State<ViewShipments> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          EachShipment(value: i["orderId"])),
+                                      builder: (context) => new EachShipment(
+                                          value: i["orderId"],
+                                          token: widget.value)),
                                 );
                               },
                               // ignore: unnecessary_brace_in_string_interps

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -39,16 +41,61 @@ class SigninForm extends StatefulWidget {
 
 class _SigninFormState extends State<SigninForm> {
   var confirmcontroller = new TextEditingController();
+  var usernamecontroller = new TextEditingController();
   var emailcontroller = new TextEditingController();
 
   var passwordcontroller = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  var statuscode, responseBody;
+  signin() async {
+    final uri = Uri.parse('http://reahaan.pythonanywhere.com/register/');
+    final headers = {'Content-Type': 'application/json'};
+    // final headers = {
+    //   'Authorization':
+    //       'Token 1aaa6956c65f9a2c28453ccd20cf78f9857cb14a3acaf2cb6307e0c0b827f886'
+    // };
+
+    Map<String, dynamic> body = {
+      "username": usernamecontroller.text,
+      "email": emailcontroller.text,
+      "password": passwordcontroller.text
+    };
+    String jsonBody = json.encode(body);
+    final encoding = Encoding.getByName('utf-8');
+    var response;
+
+    try {
+      response = await http.post(
+        uri,
+        headers: headers,
+        body: jsonBody,
+        encoding: encoding,
+      );
+      statuscode = response.statusCode;
+      responseBody = jsonDecode(response.body);
+
+      print(responseBody);
+      print(statuscode);
+    } on Exception catch (e) {
+      print("signin function error");
+    }
+    return statuscode;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Column(
         children: [
+          TextFormField(
+            controller: usernamecontroller,
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.person),
+              //hintText: 'Door no and Street Name',
+              labelText: 'Username',
+            ),
+          ),
           TextFormField(
             controller: emailcontroller,
             decoration: const InputDecoration(
@@ -57,7 +104,6 @@ class _SigninFormState extends State<SigninForm> {
               labelText: 'Email',
             ),
           ),
-
           TextFormField(
             controller: passwordcontroller,
             obscureText: true,
@@ -69,47 +115,18 @@ class _SigninFormState extends State<SigninForm> {
           ),
           TextFormField(
             controller: confirmcontroller,
+            obscureText: true,
             decoration: const InputDecoration(
               icon: const Icon(Icons.person),
               //hintText: 'Door no and Street Name',
               labelText: 'Confirm Pasword',
             ),
           ),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       final String email = emailcontroller.text.trim();
-          //       final String password = passwordcontroller.text.trim();
-          //       final String username = usernamecontroller.text.trim();
-          //       if (email.isEmpty) {
-          //         print('Email field is empty');
-          //       } else if (password.isEmpty) {
-          //         print("Password field is empty");
-          //       } else if (username.isEmpty) {
-          //         print("Username field is empty");
-          //       }
-          //       else {
-          //         AuthMethods().login(username,email, password).then((value) async {
-          //           User? user = FirebaseAuth.instance.currentUser;
-          //           if (user != null) {
-          //             Navigator.pushReplacement(context,
-          //                 MaterialPageRoute(builder: (context) => Home()));
-          //           }
-          //         });
-          //       }
 
-          //       //.then((value) async {
-          //       //   User? result = FirebaseAuth.instance.currentUser;
-          //       //   print(result);
-          //       //   if (result != null) {
-          //       //     Navigator.pushReplacement(context,
-          //       //         MaterialPageRoute(builder: (context) => Home()));
-          //       //   }
-          //       // });
-          //     },
-          //     child: Text("LOGIN")),
           ElevatedButton(
               onPressed: () {
                 final String confirmPassword = confirmcontroller.text.trim();
+                final String username = usernamecontroller.text.trim();
                 final String email = emailcontroller.text.trim();
                 final String password =
                     passwordcontroller.text.toString().trim();
@@ -134,6 +151,16 @@ class _SigninFormState extends State<SigninForm> {
                       textColor: Colors.white,
                       fontSize: 16.0);
                   print("Password field is empty");
+                } else if (username.isEmpty) {
+                  Fluttertoast.showToast(
+                      msg: "Username field is empty",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 4,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                  print("Username field is empty");
                 } else if (password != confirmPassword) {
                   Fluttertoast.showToast(
                       msg: "Password does not match",
@@ -145,57 +172,34 @@ class _SigninFormState extends State<SigninForm> {
                       fontSize: 16.0);
                 } else {
                   try {
-                    AuthMethods()
-                        .signup(email, password, confirmPassword)
-                        .then((value) async {
-                      if (value == "Signed Up") {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => Home()));
+                    signin().then((value) {
+                      if (value == 201) {
                         Fluttertoast.showToast(
-                            msg: "Signed In successfully",
+                            msg: "Registered Successfully",
                             toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
+                            gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 4,
                             backgroundColor: Colors.green,
                             textColor: Colors.white,
                             fontSize: 16.0);
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => Login()));
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Invalid Credentials",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
                       }
-                    }).then((value) async {
-                      User? user = FirebaseAuth.instance.currentUser;
-                      await FirebaseFirestore.instance
-                          .collection("users")
-                          .doc(user!.uid)
-                          .set({
-                        'uid': user.uid,
-                        'email': email,
-                        'password': password,
-                      });
                     });
+                    // start Firebase end
                     // AuthMethods()
-                    //     .signup(username, mobile, email, password)
+                    //     .signup(email, password, confirmPassword)
                     //     .then((value) async {
-                    //   User? user = FirebaseAuth.instance.currentUser;
-
-                    //   await FirebaseFirestore.instance
-                    //       .collection("users")
-                    //       .doc(user!.uid)
-                    //       .set({
-                    //     'uid': user.uid,
-                    //     'username': username,
-                    //     'phoneNumber': mobile,
-                    //     'displayName': username,
-                    //     'email': email,
-                    //     'password': password,
-                    //     'photoURL':
-                    //         "'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-UGFLqpsC_pSdrqB07CZ6x7XRlV9LjYjJEZ3QfQ2ZcdXedG1D-m2DMRB2ZgSekb98S8&usqp=CAU'",
-                    //   });
-                    //   user.updateProfile(
-                    //     displayName: username,
-                    //     photoURL:
-                    //         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-UGFLqpsC_pSdrqB07CZ6x7XRlV9LjYjJEZ3QfQ2ZcdXedG1D-m2DMRB2ZgSekb98S8&usqp=CAU',
-                    //   );
-
-                    //   if (user != null && value == "Signed Up") {
+                    //   if (value == "Signed Up") {
                     //     Navigator.pushReplacement(context,
                     //         MaterialPageRoute(builder: (context) => Home()));
                     //     Fluttertoast.showToast(
@@ -207,8 +211,18 @@ class _SigninFormState extends State<SigninForm> {
                     //         textColor: Colors.white,
                     //         fontSize: 16.0);
                     //   }
-                    //   print("signed up successfully");
+                    // }).then((value) async {
+                    //   User? user = FirebaseAuth.instance.currentUser;
+                    //   await FirebaseFirestore.instance
+                    //       .collection("users")
+                    //       .doc(user!.uid)
+                    //       .set({
+                    //     'uid': user.uid,
+                    //     'email': email,
+                    //     'password': password,
+                    //   });
                     // });
+                    // end firebase auth
                   } catch (e) {
                     Fluttertoast.showToast(
                         msg: "Invalid Credentials",

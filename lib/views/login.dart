@@ -40,8 +40,11 @@ class _LoginFormState extends State<LoginForm> {
   var usernamecontroller = new TextEditingController();
   var passwordcontroller = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   var responsebody;
   var token, statusCode;
+  bool _isObscure = true;
+
   login() async {
     final uri = Uri.parse('http://reahaan.pythonanywhere.com/login/');
     final headers = {'Content-Type': 'application/json'};
@@ -94,15 +97,89 @@ class _LoginFormState extends State<LoginForm> {
               labelText: 'Username',
             ),
           ),
+
           TextFormField(
             controller: passwordcontroller,
-            obscureText: true,
-            decoration: const InputDecoration(
+            onFieldSubmitted: (String str) {
+              final String email = usernamecontroller.text.trim();
+              final String password = passwordcontroller.text.trim();
+              if (email.isEmpty) {
+                Fluttertoast.showToast(
+                    msg: "Email field is empty",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+                print('Email field is empty');
+              } else if (password.isEmpty) {
+                Fluttertoast.showToast(
+                    msg: "Password field is empty",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+                print("Password field is empty");
+              } else {
+                try {
+                  login().then((value) {
+                    if (value == 201) {
+                      showLoadingDialog();
+                      Fluttertoast.showToast(
+                          msg: "Logged in Successfully",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 4,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Home(value: token)));
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: "Invalid Credentials",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 4,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
+                  });
+                } on Exception catch (e) {
+                  Fluttertoast.showToast(
+                      msg: "Invalid Credentials",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 4,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
+              }
+            },
+            obscureText: _isObscure,
+            decoration: InputDecoration(
               icon: const Icon(Icons.person),
               //hintText: 'Door no and Street Name',
               labelText: 'Password',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isObscure = !_isObscure;
+                  });
+                },
+                icon:
+                    Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
+              ),
             ),
           ),
+
           ElevatedButton(
               onPressed: () {
                 final String email = usernamecontroller.text.trim();
@@ -131,6 +208,7 @@ class _LoginFormState extends State<LoginForm> {
                   try {
                     login().then((value) {
                       if (value == 201) {
+                        showLoadingDialog();
                         Fluttertoast.showToast(
                             msg: "Logged in Successfully",
                             toastLength: Toast.LENGTH_SHORT,

@@ -1,15 +1,18 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
 import 'package:shipping/helperfunctions/sharedpref_helper.dart';
 import 'package:shipping/services/auth.dart';
 import 'package:shipping/views/createshipment.dart';
+import 'package:shipping/views/eachshipment.dart';
 
 import 'package:shipping/views/profile.dart';
+import 'package:shipping/views/search.dart';
 import 'package:shipping/views/signin.dart';
 import 'package:shipping/views/viewshipments.dart';
 import 'package:shipping/views/cost.dart';
@@ -30,14 +33,19 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     // TODO: implement initState
+    //showLoadingDialog();
     print(widget.value);
     super.initState();
-    hideLoadingDialog();
+
+    Timer(Duration(seconds: 1), () {
+      hideLoadingDialog();
+    });
   }
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   String myName = "", myProfilePic = "", myUserName = "", myEmail = "";
-
+  var search = TextEditingController();
+  var statusCode;
   getCurrentUser() async {
     setState(() {
       myName = auth.currentUser!.displayName.toString();
@@ -90,6 +98,16 @@ class _HomeState extends State<Home> {
                     height: 50,
                     width: 300,
                     child: TextField(
+                      controller: search,
+                      onSubmitted: (String str) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EachShipment(
+                                  token: widget.value.toString(),
+                                  value: search.text.toString())),
+                        );
+                      },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Tracking ID',
@@ -105,7 +123,13 @@ class _HomeState extends State<Home> {
                             horizontal: 10.0, vertical: 12),
                         child: Icon(Icons.search)),
                     onPressed: () {
-                      print('Pressed');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EachShipment(
+                                token: widget.value.toString(),
+                                value: search.text.toString())),
+                      );
                     },
                   ),
                 ),
@@ -156,8 +180,6 @@ class _HomeState extends State<Home> {
                         child: ListTile(
                             contentPadding: EdgeInsets.all(10),
                             onTap: () {
-                              showLoadingDialog();
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

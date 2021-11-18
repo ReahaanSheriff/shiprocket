@@ -1,13 +1,8 @@
-import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shipping/services/auth.dart';
-import 'package:shipping/views/home.dart';
 import 'package:shipping/views/signin.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:load/load.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 
 void main() async {

@@ -471,12 +471,13 @@ class _OrderDetailsState extends State<OrderDetails> {
               //trailing: Icon(Icons.add_box_outlined)
             )),
           ),
-          new Container(
-            child: ElevatedButton(
-              child: Text("Update Shipment"),
-              onPressed: () {},
+          if (cancelled == false && outforpickup == false)
+            new Container(
+              child: ElevatedButton(
+                child: Text("Update Shipment"),
+                onPressed: () {},
+              ),
             ),
-          ),
           if (cancelled == false && outforpickup == false)
             new Container(
               child: ElevatedButton(
@@ -591,11 +592,11 @@ class _TrackingState extends State<Tracking> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              Text("Estimated Delivery ${est}"),
+              if (est != null) Text("Estimated Delivery ${est}"),
               SizedBox(
                 height: 20,
               ),
-              if (scheduled == true)
+              if (scheduled == true && est != null)
                 TimelineTile(
                   //alignment: TimelineAlign.center,
                   isFirst: true,

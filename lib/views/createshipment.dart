@@ -888,7 +888,7 @@ class _PickupAddressState extends State<PickupAddress>
     showLoadingDialog();
 
     Timer(Duration(seconds: 3), () {
-      hideLoadingDialog();
+      if (amount && thirtyDaysFromNow != null) hideLoadingDialog();
       showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(

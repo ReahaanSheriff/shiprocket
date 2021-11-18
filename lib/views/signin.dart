@@ -43,10 +43,11 @@ class _SigninFormState extends State<SigninForm> {
   var confirmcontroller = new TextEditingController();
   var usernamecontroller = new TextEditingController();
   var emailcontroller = new TextEditingController();
-
+  bool _isObscure = true;
+  bool _isConObscure = true;
   var passwordcontroller = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  var statuscode, responseBody;
+  var statuscode, responseBody, res;
   signin() async {
     final uri = Uri.parse('http://reahaan.pythonanywhere.com/register/');
     final headers = {'Content-Type': 'application/json'};
@@ -77,7 +78,7 @@ class _SigninFormState extends State<SigninForm> {
       print(responseBody);
       print(statuscode);
     } on Exception catch (e) {
-      print("signin function error");
+      print(e);
     }
     return statuscode;
   }
@@ -106,20 +107,120 @@ class _SigninFormState extends State<SigninForm> {
           ),
           TextFormField(
             controller: passwordcontroller,
-            obscureText: true,
-            decoration: const InputDecoration(
+            obscureText: _isObscure,
+            decoration: InputDecoration(
               icon: const Icon(Icons.person),
               //hintText: 'Door no and Street Name',
               labelText: 'Password',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isObscure = !_isObscure;
+                  });
+                },
+                icon:
+                    Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
+              ),
             ),
           ),
           TextFormField(
+            onFieldSubmitted: (String str) {
+              final String confirmPassword = confirmcontroller.text.trim();
+              final String username = usernamecontroller.text.trim();
+              final String email = emailcontroller.text.trim();
+              final String password = passwordcontroller.text.toString().trim();
+              if (email.isEmpty) {
+                Fluttertoast.showToast(
+                    msg: "Email field is empty",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+
+                //print('Email field is empty');
+              } else if (password.isEmpty) {
+                Fluttertoast.showToast(
+                    msg: "Password field is empty",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+                print("Password field is empty");
+              } else if (username.isEmpty) {
+                Fluttertoast.showToast(
+                    msg: "Username field is empty",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+                print("Username field is empty");
+              } else if (password != confirmPassword) {
+                Fluttertoast.showToast(
+                    msg: "Password does not match",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              } else {
+                try {
+                  signin().then((value) {
+                    if (value == 201) {
+                      Fluttertoast.showToast(
+                          msg: "Registered Successfully",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 4,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Login()));
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: responseBody.toString(),
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 4,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
+                  });
+                } catch (e) {
+                  Fluttertoast.showToast(
+                      msg: "Invalid Credentials",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 4,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
+              }
+            },
             controller: confirmcontroller,
-            obscureText: true,
-            decoration: const InputDecoration(
+            obscureText: _isConObscure,
+            decoration: InputDecoration(
               icon: const Icon(Icons.person),
               //hintText: 'Door no and Street Name',
               labelText: 'Confirm Pasword',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isConObscure = !_isConObscure;
+                  });
+                },
+                icon: Icon(
+                    _isConObscure ? Icons.visibility : Icons.visibility_off),
+              ),
             ),
           ),
 
@@ -186,7 +287,7 @@ class _SigninFormState extends State<SigninForm> {
                             MaterialPageRoute(builder: (context) => Login()));
                       } else {
                         Fluttertoast.showToast(
-                            msg: "Invalid Credentials",
+                            msg: responseBody.toString(),
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 4,

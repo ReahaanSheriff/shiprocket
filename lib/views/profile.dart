@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:load/load.dart';
@@ -29,6 +30,10 @@ class _ProfileState extends State<Profile> {
   //     .toString()
   //     .replaceAll("@gmail.com", "");
   var currentuserresponse, responseBody, name, email;
+  var oldpassword = TextEditingController();
+  var newpassword = TextEditingController();
+  bool oObscure = true;
+  bool nObscure = true;
   currentUser() async {
     final uri = Uri.parse('http://reahaan.pythonanywhere.com/currentuser/');
     final headers = {'Authorization': 'Token ' + widget.value.toString()};
@@ -52,6 +57,56 @@ class _ProfileState extends State<Profile> {
       print(responseBody);
 
       //print(responseBody['id']);
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  changePassword() async {
+    final uri = Uri.parse('http://reahaan.pythonanywhere.com/changepassword/');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token ' + widget.value.toString()
+    };
+
+    Map<String, dynamic> body = {
+      "old_password": oldpassword,
+      "new_password": newpassword,
+    };
+    var jsonBody = json.encode(body);
+    final encoding = Encoding.getByName('utf-8');
+    var response;
+    var statusCode;
+    var responseBody;
+
+    try {
+      response = await http.put(
+        uri,
+        headers: headers,
+        body: jsonBody,
+        encoding: encoding,
+      );
+      statusCode = response.statusCode;
+      responseBody = jsonDecode(response.body);
+    } on Exception catch (e) {
+      print(e);
+    }
+    return responseBody['status'];
+  }
+
+  deleteTokens() async {
+    final uri = Uri.parse('http://reahaan.pythonanywhere.com/deletetokens/');
+    //final headers = {'Authorization': 'Token ' + widget.value.toString()};
+//String jsonBody = json.encode(body);
+    //final encoding = Encoding.getByName('utf-8');
+
+    try {
+      currentuserresponse = await http.post(
+        uri,
+        //headers: headers,
+        //body: jsonBody,
+        //encoding: encoding,
+      );
     } on Exception catch (e) {
       print(e);
     }
@@ -134,11 +189,120 @@ class _ProfileState extends State<Profile> {
               )),
             ),
           ),
+          Container(
+            child: Column(
+              children: [
+                Center(child: Text("Change Password")),
+                TextField(
+                  controller: oldpassword,
+                  obscureText: oObscure,
+                  decoration: InputDecoration(
+                    icon: const Icon(Icons.price_change),
+                    //hintText: 'Country',
+                    labelText: 'Old Password',
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          oObscure = !oObscure;
+                        });
+                      },
+                      icon: Icon(
+                          oObscure ? Icons.visibility : Icons.visibility_off),
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: newpassword,
+                  obscureText: nObscure,
+                  decoration: InputDecoration(
+                    icon: const Icon(Icons.price_change),
+                    //hintText: 'Country',
+                    labelText: 'New Password',
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          nObscure = !nObscure;
+                        });
+                      },
+                      icon: Icon(
+                          nObscure ? Icons.visibility : Icons.visibility_off),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      final String opassword = oldpassword.text.trim();
+                      final String npassword = newpassword.text.trim();
+                      if (opassword.isEmpty) {
+                        Fluttertoast.showToast(
+                            msg: "Email field is empty",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      } else if (npassword.isEmpty) {
+                        Fluttertoast.showToast(
+                            msg: "Password field is empty",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      } else {
+                        try {
+                          changePassword().then((value) {
+                            if (value == 'success') {
+                              showLoadingDialog();
+                              Fluttertoast.showToast(
+                                  msg: "Password changed Successfully",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 4,
+                                  backgroundColor: Colors.green,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: "Invalid Credentials",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 4,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            }
+                          });
+                        } on Exception catch (e) {
+                          Fluttertoast.showToast(
+                              msg: "Invalid Credentials",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      }
+                    },
+                    child: Text("Submit"))
+              ],
+            ),
+          ),
           ElevatedButton(
               onPressed: () {
                 signout().then((_) {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SignIn()));
+                  deleteTokens();
+                  Navigator.pop(
+                      context, true); // It worked for me instead of above line
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignIn()),
+                  );
+                  // Navigator.pushReplacement(context,
+                  //     MaterialPageRoute(builder: (context) => SignIn()));
                 });
                 // AuthMethods().signOut().then((s) {
                 //   Navigator.pushReplacement(context,

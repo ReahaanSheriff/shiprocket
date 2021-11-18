@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:load/load.dart';
 import 'package:shipping/views/eachshipment.dart';
 import 'package:http/http.dart' as http;
@@ -53,19 +53,8 @@ class _ViewShipmentsState extends State<ViewShipments> {
 
   @override
   void initState() {
-    try {
-      viewAllShipment();
-    } on Exception catch (e) {
-      Fluttertoast.showToast(
-          msg: "No shipments",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 4,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
-
+    viewAllShipment();
+    showLoadingDialog();
     Timer(Duration(seconds: 1), () {
       hideLoadingDialog();
     });
@@ -84,7 +73,9 @@ class _ViewShipmentsState extends State<ViewShipments> {
               padding: const EdgeInsets.all(12),
               children: <Widget>[
                 Padding(padding: EdgeInsets.only(top: 10)),
-                if (jsonData != null)
+                if (jsonData == null)
+                  Center(child: Text("No shipments"))
+                else if (jsonData != null)
                   for (var i in jsonData)
                     Container(
                       height: 100,

@@ -342,7 +342,7 @@ class _SigninFormState extends State<SigninForm> {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => Login()));
               },
-              child: Text("Already Have an account or Google signIn")),
+              child: Text("Already Have an account? Login")),
           // Container(
           //   child: Center(
           //       child: InkWell(

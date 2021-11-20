@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
 import 'package:shipping/main.dart';
 import 'package:shipping/services/auth.dart';
+import 'package:shipping/views/forgetpassword.dart';
 import 'package:shipping/views/home.dart';
 
 class Login extends StatefulWidget {
@@ -282,6 +283,15 @@ class _LoginFormState extends State<LoginForm> {
                 // });
               },
               child: Text("LOGIN")),
+          Container(
+              child: Center(
+                  child: TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ForgetPassword()));
+            },
+            child: Text("Forget Password?"),
+          )))
           // ElevatedButton(
           //     onPressed: () {
           //       final String email = emailcontroller.text.trim();
@@ -305,62 +315,41 @@ class _LoginFormState extends State<LoginForm> {
           //       }
           //     },
           //     child: Text("SIGNUP")),
-          Container(
-            child: Center(
-                child: InkWell(
-              onTap: () {
-                // showLoadingDialog();
-                // AuthMethods().signInWithGoogle(context);
-              },
-              child: Ink(
-                color: Color(0xFF4285F4),
-                //color: Colors.lightBlue,
-                //color: Color(0xFF397AF3),
-                child: Padding(
-                  padding: EdgeInsets.all(6),
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      //Icon(Icons.android), // <-- Use 'Image.asset(...)' here
-                      Image.asset(
-                        'images/google.png',
-                        height: 48,
-                      ),
+          // Container(
+          //   child: Center(
+          //       child: InkWell(
+          //     onTap: () {
+          //       // showLoadingDialog();
+          //       // AuthMethods().signInWithGoogle(context);
+          //     },
+          //     child: Ink(
+          //       color: Color(0xFF4285F4),
+          //       //color: Colors.lightBlue,
+          //       //color: Color(0xFF397AF3),
+          //       child: Padding(
+          //         padding: EdgeInsets.all(6),
+          //         child: Wrap(
+          //           crossAxisAlignment: WrapCrossAlignment.center,
+          //           children: [
+          //             //Icon(Icons.android), // <-- Use 'Image.asset(...)' here
+          //             Image.asset(
+          //               'images/google.png',
+          //               height: 48,
+          //             ),
 
-                      SizedBox(width: 12),
-                      Text(
-                        'Sign in with Google',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
+          //             SizedBox(width: 12),
+          //             Text(
+          //               'Sign in with Google',
+          //               style: TextStyle(color: Colors.white),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //   )
 
-                // child: GestureDetector(
-                //   onTap: () {
-                //     AuthMethods().signInWithGoogle(context);
-                //   },
-                //   child: Container(
-                //       // decoration: BoxDecoration(
-                //       //     borderRadius: BorderRadius.circular(24), color: Colors.red),
-                //       // padding: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-                //       child: SignInButton(
-                //     Buttons.GoogleDark,
-                //     //SizedBox(width: 12),
-                //     padding: EdgeInsets.all(6),
-                //     onPressed: () {
-                //       AuthMethods().signInWithGoogle(context);
-                //     },
-                //   )),
-                //   // child: Text(
-                //   //   "Sign In with Google",
-                //   //   style: TextStyle(fontSize: 16, color: Colors.white),
-                //   // ))
-                // ),
-                ),
-          ),
+          //       ),
+          // ),
         ],
       ),
     );

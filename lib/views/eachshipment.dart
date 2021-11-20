@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:load/load.dart';
+import 'package:shipping/views/viewshipments.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class EachShipment extends StatefulWidget {
@@ -118,10 +119,11 @@ class _OrderDetailsState extends State<OrderDetails> {
 
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Token ' + widget.data.toString()
+      'Authorization': 'Token ' + widget.token.toString()
     };
     Map<String, dynamic> body = {
-      "cancelled": true,
+      "shipment": widget.data.toString(),
+      "cancelled": "true",
     };
     String jsonBody = json.encode(body);
     var response;
@@ -140,7 +142,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
       //print(statusCode);
     } on Exception catch (e) {
-      print("error on login function");
+      print("error on cancel function");
     }
   }
 
@@ -148,7 +150,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     final uri = Uri.parse(
         'http://reahaan.pythonanywhere.com/trackOneShipment/${widget.data}');
 
-    final headers = {'Authorization': 'Token ' + widget.data.toString()};
+    final headers = {'Authorization': 'Token ' + widget.token.toString()};
     try {
       tresponse = await http.get(
         uri,
@@ -156,8 +158,9 @@ class _OrderDetailsState extends State<OrderDetails> {
       );
       //statusCode = response.statusCode;
       tjsonData = jsonDecode(tresponse.body);
-
+      print("This is tracking");
       print(tjsonData);
+      print(tjsonData['outForPickup']);
       setState(() {
         tresponse;
         tjsonData;
@@ -169,6 +172,7 @@ class _OrderDetailsState extends State<OrderDetails> {
         outfordelivery = tjsonData['outForDelivery'];
         delivered = tjsonData['delivered'];
       });
+      print(outforpickup);
       //print(statusCode);
     } on Exception catch (e) {
       print("error on login function");
@@ -176,7 +180,9 @@ class _OrderDetailsState extends State<OrderDetails> {
   }
 
   getStatus() {
-    if (delivered == true) {
+    if (cancelled == true) {
+      status = "Cancelled";
+    } else if (delivered == true) {
       status = "Delivered";
     } else if (outfordelivery == true) {
       status = "Out For Delivery";
@@ -189,6 +195,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     } else {
       status = "Pickup Scheduled";
     }
+
     return status;
   }
 
@@ -196,6 +203,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   void initState() {
     trackOneShipment();
     viewOneShipment();
+
     showLoadingDialog();
     Timer(Duration(seconds: 1), () {
       hideLoadingDialog();
@@ -206,6 +214,11 @@ class _OrderDetailsState extends State<OrderDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(children: [
+      if (vjsonData == null)
+        Center(
+          child: Image.network(
+              "https://img.freepik.com/free-vector/no-data-illustration-concept_108061-573.jpg?size=338&ext=jpg"),
+        ),
       if (vjsonData != null)
         Expanded(
             child:
@@ -483,7 +496,14 @@ class _OrderDetailsState extends State<OrderDetails> {
               child: ElevatedButton(
                 child: Text("Cancel Shipment"),
                 onPressed: () {
-                  updateCancelTracking();
+                  updateCancelTracking().then((_) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ViewShipments(value: widget.token)),
+                    );
+                  });
                 },
               ),
             ),

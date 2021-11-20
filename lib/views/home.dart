@@ -12,7 +12,7 @@ import 'package:shipping/views/createshipment.dart';
 import 'package:shipping/views/eachshipment.dart';
 
 import 'package:shipping/views/profile.dart';
-import 'package:shipping/views/search.dart';
+
 import 'package:shipping/views/signin.dart';
 import 'package:shipping/views/viewshipments.dart';
 import 'package:shipping/views/cost.dart';

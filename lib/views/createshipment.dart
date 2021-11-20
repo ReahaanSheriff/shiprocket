@@ -455,7 +455,7 @@ class _PickupAddressState extends State<PickupAddress>
       tolong = jsonData["data"][0]["longitude"];
       fromlat = fromjsonData["data"][0]["latitude"];
       fromlong = fromjsonData["data"][0]["longitude"];
-    } catch (e) {
+    } on Exception catch (e) {
       Fluttertoast.showToast(
           msg: "Invalid address or Not serviceable",
           toastLength: Toast.LENGTH_SHORT,
@@ -497,31 +497,15 @@ class _PickupAddressState extends State<PickupAddress>
       //print(result);
       return result;
     }
-    // double data() {
-    //   try {
-    //     distance = Geolocator.distanceBetween(fromlat, fromlong, tolat, tolong);
-    //     // distance = await Geolocator.distanceBetween(
-    //     //     13.126958, 80.2315072, 13.092798, 80.269044);
-    //     print(distance / 1000);
-    //   } catch (e) {
-    //     print(e);
-    //   }
 
-    //   return (distance / 1000);
-    // }
+    res = data();
 
-    try {
-      res = data();
-
-      print(res);
-    } on Exception catch (e) {
-      print(e);
-    }
+    print(res);
 
     int price() {
       try {
         if (num.parse(weightcontroller.text) <= 0.500) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 25;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -539,7 +523,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 0.501 &&
             num.parse(weightcontroller.text) <= 1.000) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 35;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -557,7 +541,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 1.001 &&
             num.parse(weightcontroller.text) <= 1.5) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 45;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -575,7 +559,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 1.501 &&
             num.parse(weightcontroller.text) <= 2.0) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 55;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -593,7 +577,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 2.001 &&
             num.parse(weightcontroller.text) <= 2.5) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 65;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -611,7 +595,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 2.501 &&
             num.parse(weightcontroller.text) <= 3.0) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 75;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -629,7 +613,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 3.001 &&
             num.parse(weightcontroller.text) <= 3.5) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 85;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -647,7 +631,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 3.501 &&
             num.parse(weightcontroller.text) <= 4.0) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 95;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -665,7 +649,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 4.001 &&
             num.parse(weightcontroller.text) <= 4.5) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 105;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -683,7 +667,7 @@ class _PickupAddressState extends State<PickupAddress>
           }
         } else if (num.parse(weightcontroller.text) >= 4.501 &&
             num.parse(weightcontroller.text) <= 5.0) {
-          if (res >= 0 && res <= 50) {
+          if (res <= 50) {
             amount = 115;
             estday = 2;
           } else if (res >= 51 && res <= 200) {
@@ -713,12 +697,18 @@ class _PickupAddressState extends State<PickupAddress>
           print("Weight cannot be more than 5kgs");
         }
       } on Exception catch (e) {
-        print(e);
+        print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+        print("error on weight");
+        print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+        Fluttertoast.showToast(
+            msg: "Weight cannot be in deciaml",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 4,
+            backgroundColor: Colors.yellow,
+            textColor: Colors.black,
+            fontSize: 16.0);
       }
-      setState(() {
-        amount;
-        estday;
-      });
       return amount;
     }
 
@@ -741,6 +731,17 @@ class _PickupAddressState extends State<PickupAddress>
       }
     } on Exception catch (e) {
       // TODO
+      print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+      print("error on date func");
+      print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+      Fluttertoast.showToast(
+          msg: "error on date func",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.black,
+          fontSize: 16.0);
       print(e);
     }
   }
@@ -776,7 +777,17 @@ class _PickupAddressState extends State<PickupAddress>
       print(responseBody);
       print(statusCode);
     } on Exception catch (e) {
-      print(e);
+      print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+      print("error on post request tracking");
+      print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+      Fluttertoast.showToast(
+          msg: "error on post request tracking",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.black,
+          fontSize: 16.0);
     }
   }
 
@@ -867,6 +878,17 @@ class _PickupAddressState extends State<PickupAddress>
       print(responseBody);
       print(statusCode);
     } on Exception catch (e) {
+      print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+      print("error on post request");
+      print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+      Fluttertoast.showToast(
+          msg: "error on post request",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.black,
+          fontSize: 16.0);
       print(e);
     }
   }
@@ -888,7 +910,7 @@ class _PickupAddressState extends State<PickupAddress>
     showLoadingDialog();
 
     Timer(Duration(seconds: 3), () {
-      if (amount && thirtyDaysFromNow != null) hideLoadingDialog();
+      if (amount != null && thirtyDaysFromNow != null) hideLoadingDialog();
       showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -926,6 +948,17 @@ class _PickupAddressState extends State<PickupAddress>
   }
 
   // end form validation
+  var testing = new TextEditingController();
+  test() {
+    print('string ${testing.text}');
+    print(num.parse(testing.text));
+    if (num.parse(testing.text) >= 1.001 && num.parse(testing.text) <= 1.5) {
+      print('parsed');
+    } else {
+      print('error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -942,7 +975,12 @@ class _PickupAddressState extends State<PickupAddress>
               style: TextStyle(fontSize: 20.0),
             ),
           ),
-
+          TextFormField(
+            controller: testing,
+            onFieldSubmitted: (String str) {
+              test();
+            },
+          ),
           TextFormField(
             initialValue: ordid,
             //controller: order.text,
@@ -1027,8 +1065,12 @@ class _PickupAddressState extends State<PickupAddress>
             controller: fromPinController,
             enabled: _isEnable,
             onFieldSubmitted: (String str) {
+              showLoadingDialog();
               setState(() {
                 getFromPincodeData();
+              });
+              Timer(Duration(seconds: 3), () {
+                hideLoadingDialog();
               });
             },
             inputFormatters: [
@@ -1219,7 +1261,7 @@ class _PickupAddressState extends State<PickupAddress>
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Product weight should not be empty!';
-              } else if (int.parse(value) > 5) {
+              } else if (num.parse(value) > 5) {
                 return 'Product weight should not be greater than 5';
               }
               return null;

@@ -22,16 +22,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   var resetresponsebody, forgetresponsebody, fstatuscode, rstatuscode;
   forgetpassword() async {
     final uri = Uri.parse('http://reahaan.pythonanywhere.com/password_reset/');
-    final headers = {
-      'Content-Type': 'application/json',
-      'api-key':
-          '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'
-    };
-    // final headers = {
-    //   'Authorization':
-    //       'Token 1aaa6956c65f9a2c28453ccd20cf78f9857cb14a3acaf2cb6307e0c0b827f886'
-    // };
-//var pdfText= await json.decode(json.encode(response.databody);
+    final headers = {'Content-Type': 'application/json'};
+
     Map<String, dynamic> body = {
       "email": emailcontroller.text,
     };
@@ -49,8 +41,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       fstatuscode = response.statusCode;
       forgetresponsebody = json.decode(response.body);
       print(fstatuscode);
-
-      //print(statusCode);
     } on Exception catch (e) {
       print(e);
 
@@ -70,10 +60,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     final uri =
         Uri.parse('http://reahaan.pythonanywhere.com/password_reset/confirm/');
     final headers = {'Content-Type': 'application/json'};
-    // final headers = {
-    //   'Authorization':
-    //       'Token 1aaa6956c65f9a2c28453ccd20cf78f9857cb14a3acaf2cb6307e0c0b827f886'
-    // };
 
     Map<String, dynamic> body = {
       "password": passwordcontroller.text,
@@ -139,9 +125,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  // sendEmail('reahaan', 'mohammed', 'reahaansheriff@gmail.com',
-                  //     'reahaansherif@gmail.com', 'testing', '1');
-
                   forgetpassword().then((value) {
                     if (value == 200) {
                       Fluttertoast.showToast(

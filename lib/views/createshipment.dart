@@ -936,16 +936,6 @@ class _PickupAddressState extends State<PickupAddress>
   }
 
   // end form validation
-  var testing = new TextEditingController();
-  test() {
-    print('string ${testing.text}');
-    print(num.parse(testing.text));
-    if (num.parse(testing.text) >= 1.001 && num.parse(testing.text) <= 1.5) {
-      print('parsed');
-    } else {
-      print('error');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -962,12 +952,6 @@ class _PickupAddressState extends State<PickupAddress>
               "Pickup Address",
               style: TextStyle(fontSize: 20.0),
             ),
-          ),
-          TextFormField(
-            controller: testing,
-            onFieldSubmitted: (String str) {
-              test();
-            },
           ),
           TextFormField(
             initialValue: ordid,

@@ -134,6 +134,15 @@ class _SigninFormState extends State<SigninForm> {
                     fontSize: 16.0);
 
                 //print('Email field is empty');
+              } else if (!email.contains('@')) {
+                Fluttertoast.showToast(
+                    msg: "Email is not valid",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
               } else if (password.isEmpty) {
                 Fluttertoast.showToast(
                     msg: "Password field is empty",

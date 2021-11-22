@@ -9,6 +9,7 @@ import 'package:shipping/views/createshipment.dart';
 import 'package:shipping/views/eachshipment.dart';
 
 import 'package:shipping/views/profile.dart';
+import 'package:shipping/views/support.dart';
 
 import 'package:shipping/views/viewshipments.dart';
 import 'package:shipping/views/cost.dart';
@@ -53,26 +54,28 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: Text("Shipping"),
           automaticallyImplyLeading: false,
-          // actions: [
-          //   InkWell(
-          //       onTap: () {
-          //         AuthMethods().signOut().then((s) {
-          //           Navigator.pushReplacement(context,
-          //               MaterialPageRoute(builder: (context) => SignIn()));
-          //         });
-          //       },
-          //       child: Container(
-          //           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          //           child: Column(children: [
-          //             Row(children: [
-          //               Text(myName),
-          //               Icon(
-          //                 Icons.exit_to_app,
-          //                 size: 25,
-          //               )
-          //             ])
-          //           ])))
-          // ],
+          actions: [
+            InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Profile(
+                              value: widget.value,
+                            )),
+                  );
+                },
+                child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Column(children: [
+                      Row(children: [
+                        Icon(
+                          Icons.account_circle,
+                          size: 25,
+                        )
+                      ])
+                    ])))
+          ],
         ),
         body: Column(
           children: [
@@ -211,8 +214,7 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        Profile(value: widget.value)),
+                                    builder: (context) => Support()),
                               );
                             },
                             // onTap: () {
@@ -225,10 +227,10 @@ class _HomeState extends State<Home> {
                             //       textColor: Colors.white,
                             //       fontSize: 16.0);
                             // },
-                            title: Text("Profile"),
-                            subtitle: Text("Manage your shiprocket account."),
+                            title: Text("Support"),
+                            subtitle: Text("Share your shiprocket queries."),
                             leading: Icon(
-                              Icons.account_box_rounded,
+                              Icons.mail,
                               size: 40,
                             ),
                             trailing: Icon(Icons.arrow_forward_ios_outlined))),

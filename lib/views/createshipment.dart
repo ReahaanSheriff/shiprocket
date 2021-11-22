@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +9,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:load/load.dart';
-import 'package:shipping/views/home.dart';
 
 import 'package:shipping/views/viewshipments.dart';
 import 'dart:math';
@@ -103,7 +102,7 @@ class _PickupAddressState extends State<PickupAddress>
       amount,
       estday,
       kms,
-      Cost,
+      cost,
       city,
       state,
       country,
@@ -112,7 +111,7 @@ class _PickupAddressState extends State<PickupAddress>
       fcountry,
       thirtyDaysFromNow,
       distance,
-      currentuser_response,
+      currentuserResponse,
       uid;
 
   // double count = 0;
@@ -187,7 +186,6 @@ class _PickupAddressState extends State<PickupAddress>
       // print(tolat);
       // print(tolong);
     } on Exception catch (e) {
-      // TODO
       Fluttertoast.showToast(
           msg: "Unable to get current location",
           toastLength: Toast.LENGTH_SHORT,
@@ -230,7 +228,6 @@ class _PickupAddressState extends State<PickupAddress>
         });
       }
     } on Exception catch (e) {
-      // TODO
       Fluttertoast.showToast(
           msg: "Pincode invalid or not serviceable",
           toastLength: Toast.LENGTH_SHORT,
@@ -288,8 +285,6 @@ class _PickupAddressState extends State<PickupAddress>
     //   print(i["PostOffice"][0]['Country']);
     // }
     //print(jsonData[0]["PostOffice"][0]);
-
-    // TODO
   }
 
   // createShipmentApi() async {
@@ -426,7 +421,7 @@ class _PickupAddressState extends State<PickupAddress>
 
 // Calculating Sphpping price and estimated delivery date
 
-  Future<void> GetAddressFromLatLong(Position position) async {
+  Future<void> getAddressFromLatLong(Position position) async {
     //showAni = true;
     final toqueryParameters = {
       'access_key': env["ACCESS_KEY"],
@@ -697,9 +692,6 @@ class _PickupAddressState extends State<PickupAddress>
           print("Weight cannot be more than 5kgs");
         }
       } on Exception catch (e) {
-        print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
-        print("error on weight");
-        print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
         Fluttertoast.showToast(
             msg: "Weight cannot be in deciaml",
             toastLength: Toast.LENGTH_SHORT,
@@ -730,10 +722,6 @@ class _PickupAddressState extends State<PickupAddress>
         });
       }
     } on Exception catch (e) {
-      // TODO
-      print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
-      print("error on date func");
-      print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
       Fluttertoast.showToast(
           msg: "error on date func",
           toastLength: Toast.LENGTH_SHORT,
@@ -802,14 +790,14 @@ class _PickupAddressState extends State<PickupAddress>
     //final encoding = Encoding.getByName('utf-8');
 
     try {
-      currentuser_response = await http.get(
+      currentuserResponse = await http.get(
         uri,
         headers: headers,
         //body: jsonBody,
         //encoding: encoding,
       );
 
-      responseBody = jsonDecode(currentuser_response.body);
+      responseBody = jsonDecode(currentuserResponse.body);
       print(responseBody['id']);
       print(responseBody);
       setState(() {
@@ -904,7 +892,7 @@ class _PickupAddressState extends State<PickupAddress>
     }
 
     Position position = await _getGeoCostPosition();
-    GetAddressFromLatLong(position);
+    getAddressFromLatLong(position);
 
     _formKey.currentState!.save();
     showLoadingDialog();
@@ -1000,7 +988,7 @@ class _PickupAddressState extends State<PickupAddress>
                   onPressed: () async {
                     showLoadingDialog();
                     Position position = await _getGeoCostPosition();
-                    Cost =
+                    cost =
                         'Lat: ${position.latitude} , Long: ${position.longitude}';
                     getCurrentAddress(position);
                     Timer(Duration(seconds: 3), () {
@@ -1374,7 +1362,7 @@ class _PickupAddressState extends State<PickupAddress>
                 onPressed: () async {
                   _submit();
                   // Position position = await _getGeoCostPosition();
-                  // GetAddressFromLatLong(position);
+                  // getAddressFromLatLong(position);
 
                   //   showLoadingDialog();
 

@@ -1,19 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:load/load.dart';
-import 'package:shipping/helperfunctions/sharedpref_helper.dart';
-import 'package:shipping/services/auth.dart';
+
 import 'package:shipping/views/createshipment.dart';
 import 'package:shipping/views/eachshipment.dart';
 
 import 'package:shipping/views/profile.dart';
 
-import 'package:shipping/views/signin.dart';
 import 'package:shipping/views/viewshipments.dart';
 import 'package:shipping/views/cost.dart';
 import 'package:vector_math/vector_math.dart' as vec;
@@ -32,9 +28,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   void initState() {
-    // TODO: implement initState
-    //showLoadingDialog();
-    print(widget.value);
     super.initState();
 
     Timer(Duration(seconds: 1), () {
@@ -42,16 +35,9 @@ class _HomeState extends State<Home> {
     });
   }
 
-  final FirebaseAuth auth = FirebaseAuth.instance;
   String myName = "", myProfilePic = "", myUserName = "", myEmail = "";
   var search = TextEditingController();
   var statusCode;
-  getCurrentUser() async {
-    setState(() {
-      myName = auth.currentUser!.displayName.toString();
-    });
-    return await auth.currentUser;
-  }
 
   // getMyInfoFromSharedPreference() async {
   //   myName = await SharedPreferenceHelper().getDisplayName() as String;
@@ -63,7 +49,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    getCurrentUser();
     return Scaffold(
         appBar: AppBar(
           title: Text("Shipping"),

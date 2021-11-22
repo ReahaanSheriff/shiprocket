@@ -17,7 +17,6 @@ class Cost extends StatefulWidget {
 }
 
 class _CostState extends State<Cost> {
-  String Cost = 'Null, Press Button';
   String fromAddress = 'search';
   String toAddress = "";
   String toAddressText = "";
@@ -96,7 +95,7 @@ class _CostState extends State<Cost> {
   //   });
   //   //return ([tolat, tolong]);
   // }
-  Future<void> GetCurrentAddress(Position position) async {
+  Future<void> getCurrentAddress(Position position) async {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
 //print(placemarks);
@@ -112,7 +111,7 @@ class _CostState extends State<Cost> {
     print(tolong);
   }
 
-  Future<void> GetAddressFromLatLong(Position position) async {
+  Future<void> getAddressFromLatLong(Position position) async {
     final toqueryParameters = {
       'access_key': env["ACCESS_KEY"],
       'query': '${destaddresscontroller.text}',
@@ -387,17 +386,17 @@ class _CostState extends State<Cost> {
 
     kms = price();
     print(kms);
-    try {
-      distance = await Geolocator.distanceBetween(
-          position.latitude, position.longitude, tolat, tolong);
-      // distance = await Geolocator.distanceBetween(
-      //     13.126958, 80.2315072, 13.092798, 80.269044);
-      print(distance / 1000);
-    } catch (e) {
-      print(e);
-    }
+    // try {
+    //   distance = await Geolocator.distanceBetween(
+    //       position.latitude, position.longitude, tolat, tolong);
+    //   // distance = await Geolocator.distanceBetween(
+    //   //     13.126958, 80.2315072, 13.092798, 80.269044);
+    //   print(distance / 1000);
+    // } catch (e) {
+    //   print(e);
+    // }
 
-    print(distance);
+    // print(distance);
 
     // Date
     try {
@@ -411,7 +410,6 @@ class _CostState extends State<Cost> {
       // end date
       setState(() {});
     } on Exception catch (e) {
-      // TODO
       print(e);
     }
   }
@@ -453,7 +451,7 @@ class _CostState extends State<Cost> {
             //       Position position = await _getGeoCostPosition();
             //       Cost =
             //           'Lat: ${position.latitude} , Long: ${position.longitude}';
-            //       GetCurrentAddress(position);
+            //       getCurrentAddress(position);
             //     },
             //     child: Text('Get Address')),
             TextFormField(
@@ -483,14 +481,14 @@ class _CostState extends State<Cost> {
             SizedBox(
               height: 10,
             ),
-            Text('Total expected shipping cost ${kms}'),
+            Text('Total expected shipping cost $kms'),
             SizedBox(
               height: 10,
             ),
             ElevatedButton(
                 onPressed: () async {
                   Position position = await _getGeoCostPosition();
-                  GetAddressFromLatLong(position);
+                  getAddressFromLatLong(position);
                 },
                 child: Text("Get Price"))
           ],

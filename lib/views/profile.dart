@@ -4,11 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:load/load.dart';
-import 'package:shipping/services/auth.dart';
-import 'package:shipping/views/signin.dart';
-import 'dart:math';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shipping/views/signin.dart';
 
 class Profile extends StatefulWidget {
   final String value;
@@ -75,8 +72,7 @@ class _ProfileState extends State<Profile> {
     };
     var jsonBody = json.encode(body);
     final encoding = Encoding.getByName('utf-8');
-    var response;
-    var statusCode;
+    var response, statusCode;
 
     try {
       response = await http.put(
@@ -131,7 +127,6 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     print(widget.value);

@@ -1,16 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shipping/helperfunctions/sharedpref_helper.dart';
-import 'package:shipping/services/auth.dart';
-import 'package:shipping/services/database.dart';
-import 'package:shipping/views/home.dart';
+
 import 'package:shipping/views/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);

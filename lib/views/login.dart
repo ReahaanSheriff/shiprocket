@@ -1,13 +1,10 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
-import 'package:shipping/main.dart';
-import 'package:shipping/services/auth.dart';
+
 import 'package:shipping/views/forgetpassword.dart';
 import 'package:shipping/views/home.dart';
 

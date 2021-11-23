@@ -18,6 +18,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   var tokencontroller = new TextEditingController();
   var passwordcontroller = new TextEditingController();
   var resetresponsebody, forgetresponsebody, fstatuscode, rstatuscode;
+  bool _isObscure = true;
   forgetpassword() async {
     final uri = Uri.parse('http://reahaan.pythonanywhere.com/password_reset/');
     final headers = {'Content-Type': 'application/json'};
@@ -159,12 +160,22 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   labelText: 'Token',
                 )),
             TextFormField(
+                obscureText: _isObscure,
                 controller: passwordcontroller,
                 onFieldSubmitted: (String str) {
                   setState(() {});
                 },
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Password',
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isObscure = !_isObscure;
+                      });
+                    },
+                    icon: Icon(
+                        _isObscure ? Icons.visibility : Icons.visibility_off),
+                  ),
                 )),
             ElevatedButton(
                 onPressed: () {

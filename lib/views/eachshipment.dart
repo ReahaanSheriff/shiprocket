@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:load/load.dart';
+import 'package:shipping/views/update.dart';
 import 'package:shipping/views/viewshipments.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
@@ -116,6 +117,39 @@ class _OrderDetailsState extends State<OrderDetails> {
   updateCancelTracking() async {
     final uri = Uri.parse(
         'http://reahaan.pythonanywhere.com/updateTracking/${widget.data}');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token ' + widget.token.toString()
+    };
+    Map<String, dynamic> body = {
+      "shipment": widget.data.toString(),
+      "cancelled": "true",
+    };
+    String jsonBody = json.encode(body);
+    var response;
+
+    String responseBody;
+    try {
+      response = await http.put(
+        uri,
+        headers: headers,
+        body: jsonBody,
+      );
+
+      responseBody = response.body;
+
+      print(responseBody);
+
+      //print(statusCode);
+    } on Exception catch (e) {
+      print("error on cancel function");
+    }
+  }
+
+  updateCancelDetails() async {
+    final uri = Uri.parse(
+        'http://reahaan.pythonanywhere.com/updateShipment/${widget.data}');
 
     final headers = {
       'Content-Type': 'application/json',
@@ -450,7 +484,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: Text(
-                              '${vjsonData["paddress"]}, ${vjsonData["pcity"]}, ${vjsonData["pstate"]}, ${vjsonData["pcountry"]}'),
+                              '${vjsonData["pname"]},\n${vjsonData["pmobile"]}\n${vjsonData["paddress"]}, ${vjsonData["pcity"]}, ${vjsonData["pstate"]}, ${vjsonData["pcountry"]}'),
                         ),
                       ]),
                       TableRow(children: [
@@ -488,7 +522,13 @@ class _OrderDetailsState extends State<OrderDetails> {
             new Container(
               child: ElevatedButton(
                 child: Text("Update Shipment"),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UpdateShipment(
+                              token: widget.token, data: widget.data)));
+                },
               ),
             ),
           if (cancelled == false && outforpickup == false)

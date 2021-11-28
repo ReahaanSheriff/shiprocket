@@ -1,10 +1,10 @@
 import 'dart:async';
-
+import 'package:shipping/views/label.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
-
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:load/load.dart';
 import 'package:shipping/views/update.dart';
 import 'package:shipping/views/viewshipments.dart';
@@ -244,6 +244,169 @@ class _OrderDetailsState extends State<OrderDetails> {
     });
   }
 
+  Future<void> _createPDF() async {
+    PdfDocument document = PdfDocument();
+    final page = document.pages.add();
+    // // page.graphics.drawString(
+    // //     '${widget.data}\n\n Pickup Address\t' +
+    // //         '\t' * 15 +
+    // //         'Drop Address\n ${vjsonData['pname']}\t\t\t\t ${vjsonData['dname']}\n ${vjsonData['paddress']}\t\t\t\t\t${vjsonData['daddress']}\n',
+    // //     PdfStandardFont(PdfFontFamily.helvetica, 15));
+
+    PdfBorders border = PdfBorders(
+        left: PdfPen(PdfColor(255, 255, 255), width: 1),
+        top: PdfPen(PdfColor(255, 255, 255), width: 1),
+        bottom: PdfPen(PdfColor(255, 255, 255), width: 1),
+        right: PdfPen(PdfColor(255, 255, 255), width: 1));
+
+//Create a cell style
+    PdfGridCellStyle lcellStyle = PdfGridCellStyle(
+      //backgroundBrush: PdfBrushes.lightYellow,
+      borders: border,
+      cellPadding: PdfPaddings(left: 20, right: 0, top: 0, bottom: 0),
+      font: PdfStandardFont(PdfFontFamily.helvetica, 12),
+
+      //textBrush: PdfBrushes.white,
+      //textPen: PdfPens.black,
+    );
+
+    PdfGridCellStyle rcellStyle = PdfGridCellStyle(
+      //backgroundBrush: PdfBrushes.lightYellow,
+      borders: border,
+      cellPadding: PdfPaddings(left: 120, right: 150, top: 0, bottom: 0),
+      font: PdfStandardFont(PdfFontFamily.helvetica, 12),
+
+      //textBrush: PdfBrushes.white,
+      //textPen: PdfPens.black,
+    );
+
+    PdfGridCellStyle lheadStyle = PdfGridCellStyle(
+      //backgroundBrush: PdfBrushes.lightYellow,
+      borders: border,
+      cellPadding: PdfPaddings(left: 20, right: 0, top: 0, bottom: 0),
+      font: PdfStandardFont(PdfFontFamily.helvetica, 15),
+
+      //textBrush: PdfBrushes.white,
+      //textPen: PdfPens.black,
+    );
+
+    PdfGridCellStyle rheadStyle = PdfGridCellStyle(
+      //backgroundBrush: PdfBrushes.lightYellow,
+      borders: border,
+      cellPadding: PdfPaddings(left: 120, right: 150, top: 0, bottom: 0),
+      font: PdfStandardFont(PdfFontFamily.helvetica, 15),
+
+      //textBrush: PdfBrushes.white,
+      //textPen: PdfPens.black,
+    );
+
+//Create a grid style
+    PdfGridStyle gridStyle = PdfGridStyle(
+      //cellSpacing: 2,
+      //cellPadding: PdfPaddings(left: 0, right: 0, top: 0, bottom: 0),
+      //borderOverlapStyle: PdfBorderOverlapStyle.inside,
+      //backgroundBrush: PdfBrushes.white,
+      //textPen: PdfPens.black,
+      //textBrush: PdfBrushes.white,
+      font: PdfStandardFont(PdfFontFamily.helvetica, 12),
+    );
+
+    PdfGrid grid = PdfGrid();
+    grid.rows.applyStyle(gridStyle);
+
+    grid.columns.add(count: 2);
+    grid.headers.add(1);
+    PdfGridRow header = grid.headers[0];
+    header.cells[0].value = 'Pickup location';
+    header.cells[1].value = 'Drop Location';
+
+    PdfGridRow row4 = grid.rows.add();
+    row4.cells[0].value = '';
+    row4.cells[1].value = '';
+
+    PdfGridRow row1 = grid.rows.add();
+    row1.cells[0].value = '${vjsonData['pname']}';
+    row1.cells[1].value = '${vjsonData['dname']}';
+
+    PdfGridRow row2 = grid.rows.add();
+    row2.cells[0].value = '${vjsonData['paddress']}';
+    row2.cells[1].value = '${vjsonData['daddress']}';
+
+    PdfGridRow row3 = grid.rows.add();
+    row3.cells[0].value = '${vjsonData['pcity']}\t${vjsonData['ppincode']}';
+    row3.cells[1].value = '${vjsonData['dcity']}\t${vjsonData['dpincode']}';
+
+    PdfGridRow row5 = grid.rows.add();
+    row5.cells[0].value = '${vjsonData['pstate']}\t${vjsonData['pcountry']}';
+    row5.cells[1].value = '${vjsonData['dstate']}\t${vjsonData['dcountry']}';
+
+    PdfGridRow row6 = grid.rows.add();
+    row6.cells[0].value = 'Mobile: ${vjsonData['pmobile']}';
+    row6.cells[1].value = 'Mobile: ${vjsonData['dmobile']}';
+
+    header.cells[0].style = lheadStyle;
+    header.cells[1].style = rheadStyle;
+    row1.cells[0].style = lcellStyle;
+    row1.cells[1].style = rcellStyle;
+    row2.cells[0].style = lcellStyle;
+    row2.cells[1].style = rcellStyle;
+    row3.cells[0].style = lcellStyle;
+    row3.cells[1].style = rcellStyle;
+    row4.cells[0].style = lcellStyle;
+    row4.cells[1].style = rcellStyle;
+    row5.cells[0].style = lcellStyle;
+    row5.cells[1].style = rcellStyle;
+    row6.cells[0].style = lcellStyle;
+    row6.cells[1].style = rcellStyle;
+
+    // grid.draw(page: page, bounds: const Rect.fromLTWH(0, 25, 0, 0));
+    grid.draw(page: page, bounds: const Rect.fromLTWH(20, 35, 400, 300));
+
+    page.graphics.drawString('\t\t\t\t\t\t\t\tORDER ID: ${widget.data} \n\n',
+        PdfStandardFont(PdfFontFamily.helvetica, 18),
+        bounds: const Rect.fromLTWH(0, 0, 0, 0));
+
+    page.graphics.drawString('SHIPMENT WEIGHT: ${vjsonData['weight']}',
+        PdfStandardFont(PdfFontFamily.helvetica, 15),
+        bounds: const Rect.fromLTWH(20, 220, 400, 300));
+
+    page.graphics.drawString(
+        'DIMENSIONS: ${vjsonData['length']} X ${vjsonData['width']} X ${vjsonData['height']}',
+        PdfStandardFont(PdfFontFamily.helvetica, 15),
+        bounds: const Rect.fromLTWH(20, 250, 400, 300));
+
+    page.graphics.drawString('Product Name: ${vjsonData['productName']}',
+        PdfStandardFont(PdfFontFamily.helvetica, 15),
+        bounds: const Rect.fromLTWH(320, 220, 400, 300));
+
+    page.graphics.drawString('Product Value: Rs. ${vjsonData['productValue']}',
+        PdfStandardFont(PdfFontFamily.helvetica, 15),
+        bounds: const Rect.fromLTWH(320, 250, 400, 300));
+
+    page.graphics.drawString(
+        'TERMS AND CONDITIONS', PdfStandardFont(PdfFontFamily.helvetica, 12),
+        bounds: const Rect.fromLTWH(20, 650, 0, 0));
+    PdfGraphics graphics = page.graphics;
+    graphics.drawRectangle(
+        pen: PdfPen(PdfColor(0, 0, 0)),
+        bounds: Rect.fromLTWH(
+            0, 0, page.getClientSize().width, page.getClientSize().height));
+    page.graphics.drawString(
+        "1.If delivery executive couldn't reach the destination after 3 attempts it will be returned to the pickup destination\n2.Illegal items should not be shipped, If found any suspicious item then llegal action will be taken",
+        PdfStandardFont(PdfFontFamily.helvetica, 10),
+        bounds: const Rect.fromLTWH(20, 680, 0, 0));
+
+    page.graphics.drawString(
+        'This is an auto generated label and does not required signature',
+        PdfStandardFont(PdfFontFamily.helvetica, 12),
+        bounds: const Rect.fromLTWH(20, 730, 0, 0));
+
+    List<int> bytes = document.save();
+    document.dispose();
+
+    saveAndLaunchFile(bytes, 'Label.pdf');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -258,6 +421,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             child:
                 ListView(padding: const EdgeInsets.all(12), children: <Widget>[
           Padding(padding: EdgeInsets.only(top: 10)),
+          Text("Download and paste the label on your shipment"),
           Container(
               height: 100,
               child: Card(
@@ -517,6 +681,14 @@ class _OrderDetailsState extends State<OrderDetails> {
               ),
               //trailing: Icon(Icons.add_box_outlined)
             )),
+          ),
+          new Container(
+            child: ElevatedButton(
+              child: Text("View Label"),
+              onPressed: () {
+                _createPDF();
+              },
+            ),
           ),
           if (cancelled == false && outforpickup == false)
             new Container(

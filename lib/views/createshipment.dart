@@ -171,8 +171,7 @@ class _PickupAddressState extends State<PickupAddress>
       fromAddress =
           '${place.thoroughfare}, \n ${place.subLocality},\n ${place.locality},${place.administrativeArea}, \n ${place.country}, ${place.postalCode}';
       _isEnable = false;
-      pick.text =
-          '${place.thoroughfare} ${place.subLocality} ${place.locality} ${place.administrativeArea} ${place.country}';
+      pick.text = '${place.thoroughfare} ${place.subLocality}';
       // fromstate.text = fromcity.text = "";
       fromPinController.text = place.postalCode!;
       // fromcountry.text = "";

@@ -50,17 +50,6 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => Home(value: token),
         "signin": (context) => SignIn()
       },
-      //home: token != null ? Home(value: token) : SignIn()
-      // home: FutureBuilder(
-      //   future: currentUser(),
-      //   builder: (context, AsyncSnapshot<dynamic> snapshot) {
-      //     if (snapshot.hasData) {
-      //       return SignIn();
-      //     } else {
-      //       return Home(value: token);
-      //     }
-      //   },
-      // ),
     );
   }
 }

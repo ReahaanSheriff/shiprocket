@@ -40,6 +40,9 @@ dependencies:
   timeline_tile:
   flutter_email_sender: ^5.0.2
   shared_preferences: ^2.0.7
+  syncfusion_flutter_pdf: ^19.3.55-beta
+  path_provider:
+  open_file:
  
 
 

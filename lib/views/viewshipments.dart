@@ -36,20 +36,15 @@ class _ViewShipmentsState extends State<ViewShipments> {
       statusCode = response.statusCode;
       jsonData = jsonDecode(response.body);
 
-      print(jsonData);
+      //print(jsonData);
       setState(() {
         jsonData;
       });
 
-      //print(statusCode);
+      print(statusCode);
     } on Exception catch (e) {
       print("error on login function");
     }
-    // if (jsonData == null) {
-    //     orderid = null;
-    //   } else {
-    //     orderid = jsonData[0]["orderId"];
-    //   }
   }
 
   @override

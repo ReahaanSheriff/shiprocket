@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:load/load.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:shipping/views/signin.dart';
 
@@ -291,21 +292,18 @@ class _ProfileState extends State<Profile> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  signout().then((_) {
-                    deleteTokens();
-                    Navigator.pop(context,
-                        true); // It worked for me instead of above line
+                  signout().then((_) async {
+                    Navigator.pop(context, true);
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => SignIn()),
                     );
-                    // Navigator.pushReplacement(context,
-                    //     MaterialPageRoute(builder: (context) => SignIn()));
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.clear();
+                    deleteTokens();
+                    // Navigator.popUntil(context, ModalRoute.withName('/signin'));
                   });
-                  // AuthMethods().signOut().then((s) {
-                  //   Navigator.pushReplacement(context,
-                  //       MaterialPageRoute(builder: (context) => SignIn()));
-                  // });
                 },
                 child: Padding(
                   padding:

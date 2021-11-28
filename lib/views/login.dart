@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:shipping/views/forgetpassword.dart';
 import 'package:shipping/views/home.dart';
+import 'package:shipping/views/sharedpref.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -70,9 +72,9 @@ class _LoginFormState extends State<LoginForm> {
       responsebody = jsonDecode(response.body);
 
       print(responsebody);
-      setState(() {
-        token = responsebody["token"];
-      });
+      SharedPreferenceHelper().saveToken(responsebody["token"]);
+      token = responsebody["token"];
+      setState(() {});
       print(token);
       //print(statusCode);
     } on Exception catch (e) {
@@ -126,6 +128,7 @@ class _LoginFormState extends State<LoginForm> {
                   login().then((value) {
                     if (value == 201) {
                       showLoadingDialog();
+                      Navigator.pop(context, true);
                       Fluttertoast.showToast(
                           msg: "Logged in Successfully",
                           toastLength: Toast.LENGTH_SHORT,
@@ -207,6 +210,7 @@ class _LoginFormState extends State<LoginForm> {
                     login().then((value) {
                       if (value == 201) {
                         showLoadingDialog();
+                        Navigator.pop(context, true);
                         Fluttertoast.showToast(
                             msg: "Logged in Successfully",
                             toastLength: Toast.LENGTH_SHORT,

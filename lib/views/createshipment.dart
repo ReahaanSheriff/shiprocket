@@ -898,40 +898,46 @@ class _PickupAddressState extends State<PickupAddress>
     showLoadingDialog();
 
     Timer(Duration(seconds: 3), () {
-      if (amount != null && thirtyDaysFromNow != null) hideLoadingDialog();
+      if (amount != null && thirtyDaysFromNow != null)
+        setState(() {
+          amount;
+          thirtyDaysFromNow;
+        });
+      hideLoadingDialog();
       showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                title: const Text('Estimated delivery and cost'),
-                content: Text('Rs $amount' + '\n' + '$thirtyDaysFromNow'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, 'Cancel');
-                    },
-                    child: const Text('Back'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      try {
-                        openCheckout();
-                      } catch (e) {
-                        Fluttertoast.showToast(
-                            msg: "Something went wrong, Please try later",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 4,
-                            backgroundColor: Colors.red,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
-                      }
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Estimated delivery and cost'),
+          content: Text('Rs $amount' + '\n' + '$thirtyDaysFromNow'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'Cancel');
+              },
+              child: const Text('Back'),
+            ),
+            TextButton(
+              onPressed: () {
+                try {
+                  openCheckout();
+                } catch (e) {
+                  Fluttertoast.showToast(
+                      msg: "Something went wrong, Please try later",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 4,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
 
-                      Navigator.pop(context, 'OK');
-                    },
-                    child: const Text('Create shipment'),
-                  ),
-                ],
-              ));
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('Create shipment'),
+            ),
+          ],
+        ),
+      );
     });
   }
 

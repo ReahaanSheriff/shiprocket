@@ -112,6 +112,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   bool transit = false;
   bool outfordelivery = false;
   bool delivered = false;
+  bool undelivered = false;
   var status;
 
   updateCancelTracking() async {
@@ -205,6 +206,7 @@ class _OrderDetailsState extends State<OrderDetails> {
         transit = tjsonData['transit'];
         outfordelivery = tjsonData['outForDelivery'];
         delivered = tjsonData['delivered'];
+        undelivered = tjsonData['undelivered'];
       });
       print(outforpickup);
       //print(statusCode);
@@ -216,6 +218,8 @@ class _OrderDetailsState extends State<OrderDetails> {
   getStatus() {
     if (cancelled == true) {
       status = "Cancelled";
+    } else if (undelivered == true) {
+      status = "UnDelivered";
     } else if (delivered == true) {
       status = "Delivered";
     } else if (outfordelivery == true) {
@@ -747,6 +751,7 @@ class _TrackingState extends State<Tracking> {
   bool outfordelivery = false;
   bool delivered = false;
   bool cancelled = false;
+  bool undelivered = false;
 
   var vresponse, vjsonData, est;
   viewOneShipment() async {
@@ -798,6 +803,7 @@ class _TrackingState extends State<Tracking> {
         transit = jsonData['transit'];
         outfordelivery = jsonData['outForDelivery'];
         delivered = jsonData['delivered'];
+        undelivered = jsonData['undelivered'];
       });
       //print(statusCode);
     } on Exception catch (e) {
@@ -1107,6 +1113,47 @@ class _TrackingState extends State<Tracking> {
                               ),
                               Text(
                                   "\tOrder Cancelled \n\n Your order has been Cancelled"),
+                            ],
+                          )
+                        ],
+                      ),
+                      //color: Colors.amberAccent,
+                    ),
+                  ),
+                ),
+              if (undelivered == true)
+                TimelineTile(
+                  //alignment: TimelineAlign.center,
+                  isLast: true,
+                  indicatorStyle: IndicatorStyle(
+                    width: 40,
+                    color: Colors.blue,
+                    //indicatorXY: ,
+                    //padding: const EdgeInsets.all(8),
+                    // iconStyle: IconStyle(
+                    //   color: Colors.white,
+                    //   iconData: Icons.insert_emoticon,
+                    // ),
+                  ),
+
+                  endChild: Padding(
+                    padding: const EdgeInsets.only(right: 15.0, left: 10),
+                    child: Container(
+                      constraints: const BoxConstraints(
+                        minHeight: 100,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Image.network(
+                                "https://img.lovepik.com/element/45007/0498.png_860.png",
+                                width: 70,
+                                height: 80,
+                                alignment: Alignment.bottomLeft,
+                              ),
+                              Text(
+                                  "\tOrder Undelivered \n\nAfter 3 attempts your order cannot be delivered"),
                             ],
                           )
                         ],

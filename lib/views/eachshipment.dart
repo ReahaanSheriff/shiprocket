@@ -1,8 +1,10 @@
 import 'dart:async';
+
+import 'package:flutter/services.dart';
 import 'package:shipping/views/label.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'dart:typed_data';
 import 'dart:convert';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:load/load.dart';
@@ -251,11 +253,12 @@ class _OrderDetailsState extends State<OrderDetails> {
   Future<void> _createPDF() async {
     PdfDocument document = PdfDocument();
     final page = document.pages.add();
-    // // page.graphics.drawString(
-    // //     '${widget.data}\n\n Pickup Address\t' +
-    // //         '\t' * 15 +
-    // //         'Drop Address\n ${vjsonData['pname']}\t\t\t\t ${vjsonData['dname']}\n ${vjsonData['paddress']}\t\t\t\t\t${vjsonData['daddress']}\n',
-    // //     PdfStandardFont(PdfFontFamily.helvetica, 15));
+    PdfGraphicsState state = page.graphics.save();
+    page.graphics.drawImage(PdfBitmap(await _readImageData('delivery.jpg')),
+        Rect.fromLTWH(100, 300, 300, 300));
+
+    page.graphics.drawLine(
+        PdfPen(PdfColor(0, 0, 0), width: 1), Offset(5, 200), Offset(500, 200));
 
     PdfBorders border = PdfBorders(
         left: PdfPen(PdfColor(255, 255, 255), width: 1),
@@ -263,55 +266,32 @@ class _OrderDetailsState extends State<OrderDetails> {
         bottom: PdfPen(PdfColor(255, 255, 255), width: 1),
         right: PdfPen(PdfColor(255, 255, 255), width: 1));
 
-//Create a cell style
     PdfGridCellStyle lcellStyle = PdfGridCellStyle(
-      //backgroundBrush: PdfBrushes.lightYellow,
       borders: border,
       cellPadding: PdfPaddings(left: 20, right: 0, top: 0, bottom: 0),
       font: PdfStandardFont(PdfFontFamily.helvetica, 12),
-
-      //textBrush: PdfBrushes.white,
-      //textPen: PdfPens.black,
     );
 
     PdfGridCellStyle rcellStyle = PdfGridCellStyle(
-      //backgroundBrush: PdfBrushes.lightYellow,
       borders: border,
-      cellPadding: PdfPaddings(left: 120, right: 150, top: 0, bottom: 0),
+      cellPadding: PdfPaddings(left: 60, right: 150, top: 0, bottom: 0),
       font: PdfStandardFont(PdfFontFamily.helvetica, 12),
-
-      //textBrush: PdfBrushes.white,
-      //textPen: PdfPens.black,
     );
 
     PdfGridCellStyle lheadStyle = PdfGridCellStyle(
-      //backgroundBrush: PdfBrushes.lightYellow,
       borders: border,
       cellPadding: PdfPaddings(left: 20, right: 0, top: 0, bottom: 0),
       font: PdfStandardFont(PdfFontFamily.helvetica, 15),
-
-      //textBrush: PdfBrushes.white,
-      //textPen: PdfPens.black,
     );
 
     PdfGridCellStyle rheadStyle = PdfGridCellStyle(
-      //backgroundBrush: PdfBrushes.lightYellow,
       borders: border,
-      cellPadding: PdfPaddings(left: 120, right: 150, top: 0, bottom: 0),
+      cellPadding: PdfPaddings(left: 60, right: 150, top: 0, bottom: 0),
       font: PdfStandardFont(PdfFontFamily.helvetica, 15),
-
-      //textBrush: PdfBrushes.white,
-      //textPen: PdfPens.black,
     );
 
 //Create a grid style
     PdfGridStyle gridStyle = PdfGridStyle(
-      //cellSpacing: 2,
-      //cellPadding: PdfPaddings(left: 0, right: 0, top: 0, bottom: 0),
-      //borderOverlapStyle: PdfBorderOverlapStyle.inside,
-      //backgroundBrush: PdfBrushes.white,
-      //textPen: PdfPens.black,
-      //textBrush: PdfBrushes.white,
       font: PdfStandardFont(PdfFontFamily.helvetica, 12),
     );
 
@@ -404,11 +384,16 @@ class _OrderDetailsState extends State<OrderDetails> {
         'This is an auto generated label and does not required signature',
         PdfStandardFont(PdfFontFamily.helvetica, 12),
         bounds: const Rect.fromLTWH(20, 730, 0, 0));
-
+    page.graphics.restore(state);
     List<int> bytes = document.save();
     document.dispose();
 
-    saveAndLaunchFile(bytes, 'Label.pdf');
+    saveAndLaunchFile(bytes, 'Label_${widget.data}.pdf');
+  }
+
+  Future<Uint8List> _readImageData(String name) async {
+    final data = await rootBundle.load('images/$name');
+    return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
   }
 
   @override
@@ -1153,7 +1138,7 @@ class _TrackingState extends State<Tracking> {
                                 alignment: Alignment.bottomLeft,
                               ),
                               Text(
-                                  "\tOrder Undelivered \n\nAfter 3 attempts your order cannot be delivered"),
+                                  "\tOrder Undelivered \n\nAfter 3 attempts your order\n cannot be delivered"),
                             ],
                           )
                         ],

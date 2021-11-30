@@ -171,7 +171,8 @@ class _PickupAddressState extends State<PickupAddress>
       fromAddress =
           '${place.thoroughfare}, \n ${place.subLocality},\n ${place.locality},${place.administrativeArea}, \n ${place.country}, ${place.postalCode}';
       _isEnable = false;
-      pick.text = '${place.thoroughfare} ${place.subLocality}';
+      pick.text =
+          '${place.thoroughfare} ${place.subLocality} ${place.locality}';
       // fromstate.text = fromcity.text = "";
       fromPinController.text = place.postalCode!;
       // fromcountry.text = "";
@@ -341,12 +342,6 @@ class _PickupAddressState extends State<PickupAddress>
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlerExternalWallet);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    razorpay.clear();
   }
 
   void openCheckout() {
@@ -705,7 +700,10 @@ class _PickupAddressState extends State<PickupAddress>
 
     kms = price();
     print(kms);
-
+    setState(() {
+      amount;
+      kms;
+    });
     // Date
     try {
       var formatter = new DateFormat('dd-MM-yyyy');
@@ -895,14 +893,12 @@ class _PickupAddressState extends State<PickupAddress>
 
     _formKey.currentState!.save();
     showLoadingDialog();
-
+    setState(() {
+      amount;
+      thirtyDaysFromNow;
+    });
     Timer(Duration(seconds: 3), () {
-      if (amount != null && thirtyDaysFromNow != null)
-        setState(() {
-          amount;
-          thirtyDaysFromNow;
-        });
-      hideLoadingDialog();
+      if (amount != null && thirtyDaysFromNow != null) hideLoadingDialog();
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -1427,5 +1423,32 @@ class _PickupAddressState extends State<PickupAddress>
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    razorpay.clear();
+    fname.clear();
+    fmobile.clear();
+    tname.clear();
+    tmobile.clear();
+    prodname.clear();
+    prodval.clear();
+    weightcontroller.clear();
+    prodlen.clear();
+    prodwidth.clear();
+    prodheight.clear();
+    tocity.clear();
+    tostate.clear();
+    tocountry.clear();
+    fromcity.clear();
+    fromstate.clear();
+    fromcountry.clear();
+    txt.clear();
+    toPinController.clear();
+    fromPinController.clear();
+    pick.clear();
+    drop.clear();
   }
 }

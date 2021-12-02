@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -210,7 +211,7 @@ class _LoginFormState extends State<LoginForm> {
                     login().then((value) {
                       if (value == 201) {
                         showLoadingDialog();
-                        Navigator.pop(context, true);
+                        // Navigator.pop(context, true);
                         Fluttertoast.showToast(
                             msg: "Logged in Successfully",
                             toastLength: Toast.LENGTH_SHORT,
@@ -219,10 +220,12 @@ class _LoginFormState extends State<LoginForm> {
                             backgroundColor: Colors.green,
                             textColor: Colors.white,
                             fontSize: 16.0);
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Home(value: token)));
+                        Future.delayed(const Duration(milliseconds: 500), () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Home(value: token)));
+                        });
                       } else {
                         Fluttertoast.showToast(
                             msg: "Invalid Credentials",

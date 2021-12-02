@@ -152,7 +152,25 @@ class _SigninFormState extends State<SigninForm> {
                     backgroundColor: Colors.red,
                     textColor: Colors.white,
                     fontSize: 16.0);
-                print("Password field is empty");
+              } else if (password.length < 8) {
+                Fluttertoast.showToast(
+                    msg: "Password should be greater than 7 letters",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              } else if (!password
+                  .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                Fluttertoast.showToast(
+                    msg: "Password should contain 1 special character",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
               } else if (username.isEmpty) {
                 Fluttertoast.showToast(
                     msg: "Username field is empty",
@@ -163,6 +181,15 @@ class _SigninFormState extends State<SigninForm> {
                     textColor: Colors.white,
                     fontSize: 16.0);
                 print("Username field is empty");
+              } else if (username.length < 4) {
+                Fluttertoast.showToast(
+                    msg: "Username should be grater than 3 letters",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
               } else if (password != confirmPassword) {
                 Fluttertoast.showToast(
                     msg: "Password does not match",
@@ -255,6 +282,25 @@ class _SigninFormState extends State<SigninForm> {
                       textColor: Colors.white,
                       fontSize: 16.0);
                   print("Password field is empty");
+                } else if (password.length < 8) {
+                  Fluttertoast.showToast(
+                      msg: "Password should be greater than 7 letters",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 4,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                } else if (!password
+                    .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                  Fluttertoast.showToast(
+                      msg: "Password should contain 1 special character",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 4,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
                 } else if (username.isEmpty) {
                   Fluttertoast.showToast(
                       msg: "Username field is empty",
@@ -265,6 +311,15 @@ class _SigninFormState extends State<SigninForm> {
                       textColor: Colors.white,
                       fontSize: 16.0);
                   print("Username field is empty");
+                } else if (username.length < 4) {
+                  Fluttertoast.showToast(
+                      msg: "Username should be grater than 3 letters",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 4,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
                 } else if (password != confirmPassword) {
                   Fluttertoast.showToast(
                       msg: "Password does not match",

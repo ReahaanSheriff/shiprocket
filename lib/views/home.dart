@@ -5,15 +5,15 @@ import 'package:http/http.dart' as http;
 
 import 'package:load/load.dart';
 
-import 'package:shipping/views/createshipment.dart';
-import 'package:shipping/views/eachshipment.dart';
+import 'package:Swift/views/createshipment.dart';
+import 'package:Swift/views/eachshipment.dart';
 
-import 'package:shipping/views/profile.dart';
-import 'package:shipping/views/signin.dart';
-import 'package:shipping/views/support.dart';
+import 'package:Swift/views/profile.dart';
+import 'package:Swift/views/signin.dart';
+import 'package:Swift/views/support.dart';
 
-import 'package:shipping/views/viewshipments.dart';
-import 'package:shipping/views/cost.dart';
+import 'package:Swift/views/viewshipments.dart';
+import 'package:Swift/views/cost.dart';
 import 'package:vector_math/vector_math.dart' as vec;
 
 class Home extends StatefulWidget {
@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
         // },
         Scaffold(
             appBar: AppBar(
-              title: Text("Shipping"),
+              title: Text("Swift"),
               automaticallyImplyLeading: false,
               actions: [
                 InkWell(

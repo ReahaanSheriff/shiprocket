@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:shipping/views/home.dart';
-import 'package:shipping/views/sharedpref.dart';
-import 'package:shipping/views/signin.dart';
+import 'package:Swift/views/home.dart';
+import 'package:Swift/views/sharedpref.dart';
+import 'package:Swift/views/signin.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:load/load.dart';
 import 'package:http/http.dart' as http;

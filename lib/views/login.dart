@@ -7,9 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:shipping/views/forgetpassword.dart';
-import 'package:shipping/views/home.dart';
-import 'package:shipping/views/sharedpref.dart';
+import 'package:Swift/views/forgetpassword.dart';
+import 'package:Swift/views/home.dart';
+import 'package:Swift/views/sharedpref.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Shipping"),
+        title: Text("Swift"),
       ),
       body: LoginForm(),
     );

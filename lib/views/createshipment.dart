@@ -10,7 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:load/load.dart';
 
-import 'package:shipping/views/viewshipments.dart';
+import 'package:Swift/views/viewshipments.dart';
 import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -317,7 +317,7 @@ class _PickupAddressState extends State<PickupAddress>
   //       "length": "22",
   //       "width": "14",
   //       "height": "3",
-  //       "shippingPrice": "56",
+  //       "SwiftPrice": "56",
   //       "estimateDate": "20/11/2021"
   //     });
   //     print("created");
@@ -348,7 +348,7 @@ class _PickupAddressState extends State<PickupAddress>
     var options = {
       "key": env['RAZOR_PAY_KEY'],
       "amount": num.parse(amount.toString()) * 100,
-      "name": "Shipping",
+      "name": "Swift",
       "description": "Complete your payment to create shipment",
       "prefill": {"contact": "9500777777", "email": "reahaan@gmail.com"},
       "external": {
@@ -840,7 +840,7 @@ class _PickupAddressState extends State<PickupAddress>
       "length": prodlen.text,
       "width": prodwidth.text,
       "height": prodheight.text,
-      "shippingPrice": amount,
+      "SwiftPrice": amount,
       "estimateDate": thirtyDaysFromNow
     };
     var jsonBody = json.encode(body);
@@ -1314,7 +1314,7 @@ class _PickupAddressState extends State<PickupAddress>
           //           decoration: InputDecoration(
           //             icon: const Icon(Icons.attach_money),
           //             contentPadding: EdgeInsets.all(10),
-          //             labelText: 'Shipping cost',
+          //             labelText: 'Swift cost',
           //           )),
           //     ),
 

@@ -6,7 +6,7 @@
 
    <application
         
-        android:label="shipping"
+        android:label="Swift"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

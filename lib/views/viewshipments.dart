@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:load/load.dart';
-import 'package:Swift/views/eachshipment.dart';
+import 'package:swift/views/eachshipment.dart';
 import 'package:http/http.dart' as http;
 
 class ViewShipments extends StatefulWidget {

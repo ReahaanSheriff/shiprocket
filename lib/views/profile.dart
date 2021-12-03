@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:load/load.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Swift/views/signin.dart';
+import 'package:swift/views/signin.dart';
 
 class Profile extends StatefulWidget {
   final String value;

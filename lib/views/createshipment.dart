@@ -10,7 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:load/load.dart';
 
-import 'package:Swift/views/viewshipments.dart';
+import 'package:swift/views/viewshipments.dart';
 import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -317,7 +317,7 @@ class _PickupAddressState extends State<PickupAddress>
   //       "length": "22",
   //       "width": "14",
   //       "height": "3",
-  //       "SwiftPrice": "56",
+  //       "swiftPrice": "56",
   //       "estimateDate": "20/11/2021"
   //     });
   //     print("created");
@@ -344,11 +344,38 @@ class _PickupAddressState extends State<PickupAddress>
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlerExternalWallet);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    razorpay.clear();
+    fname.dispose();
+    fmobile.dispose();
+    tname.dispose();
+    tmobile.dispose();
+    prodname.dispose();
+    prodval.dispose();
+    weightcontroller.dispose();
+    prodlen.dispose();
+    prodwidth.dispose();
+    prodheight.dispose();
+    tocity.dispose();
+    tostate.dispose();
+    tocountry.dispose();
+    fromcity.dispose();
+    fromstate.dispose();
+    fromcountry.dispose();
+    txt.dispose();
+    toPinController.dispose();
+    fromPinController.dispose();
+    pick.dispose();
+    drop.dispose();
+  }
+
   void openCheckout() {
     var options = {
       "key": env['RAZOR_PAY_KEY'],
       "amount": num.parse(amount.toString()) * 100,
-      "name": "Swift",
+      "name": "swift",
       "description": "Complete your payment to create shipment",
       "prefill": {"contact": "9500777777", "email": "reahaan@gmail.com"},
       "external": {
@@ -840,7 +867,7 @@ class _PickupAddressState extends State<PickupAddress>
       "length": prodlen.text,
       "width": prodwidth.text,
       "height": prodheight.text,
-      "SwiftPrice": amount,
+      "shippingPrice": amount,
       "estimateDate": thirtyDaysFromNow
     };
     var jsonBody = json.encode(body);
@@ -1314,7 +1341,7 @@ class _PickupAddressState extends State<PickupAddress>
           //           decoration: InputDecoration(
           //             icon: const Icon(Icons.attach_money),
           //             contentPadding: EdgeInsets.all(10),
-          //             labelText: 'Swift cost',
+          //             labelText: 'swift cost',
           //           )),
           //     ),
 
@@ -1423,32 +1450,5 @@ class _PickupAddressState extends State<PickupAddress>
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    razorpay.clear();
-    fname.clear();
-    fmobile.clear();
-    tname.clear();
-    tmobile.clear();
-    prodname.clear();
-    prodval.clear();
-    weightcontroller.clear();
-    prodlen.clear();
-    prodwidth.clear();
-    prodheight.clear();
-    tocity.clear();
-    tostate.clear();
-    tocountry.clear();
-    fromcity.clear();
-    fromstate.clear();
-    fromcountry.clear();
-    txt.clear();
-    toPinController.clear();
-    fromPinController.clear();
-    pick.clear();
-    drop.clear();
   }
 }

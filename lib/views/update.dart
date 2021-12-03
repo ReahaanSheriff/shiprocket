@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:load/load.dart';
-import 'package:Swift/views/eachshipment.dart';
+import 'package:swift/views/eachshipment.dart';
 
 class UpdateShipment extends StatefulWidget {
   final String data;
@@ -225,7 +225,7 @@ class _UpdateShipmentState extends State<UpdateShipment> {
       "length": prodlen.text,
       "width": prodwidth.text,
       "height": prodheight.text,
-      "SwiftPrice": gjsonData['SwiftPrice'],
+      "shippingPrice": gjsonData['shippingPrice'],
       "estimateDate": gjsonData['estimateDate']
     };
     String jsonBody = json.encode(body);
@@ -767,7 +767,7 @@ class _UpdateShipmentState extends State<UpdateShipment> {
               //           decoration: InputDecoration(
               //             icon: const Icon(Icons.attach_money),
               //             contentPadding: EdgeInsets.all(10),
-              //             labelText: 'Swift cost',
+              //             labelText: 'swift cost',
               //           )),
               //     ),
 

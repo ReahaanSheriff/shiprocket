@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:Swift/views/login.dart';
+import 'package:swift/views/login.dart';
 
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({Key? key}) : super(key: key);

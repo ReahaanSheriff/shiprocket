@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:Swift/views/label.dart';
+import 'package:swift/views/label.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:load/load.dart';
-import 'package:Swift/views/update.dart';
-import 'package:Swift/views/viewshipments.dart';
+import 'package:swift/views/update.dart';
+import 'package:swift/views/viewshipments.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class EachShipment extends StatefulWidget {
@@ -655,11 +655,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                       TableRow(children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Text('Swift charges'),
+                          child: Text('Shipping charges'),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Text('Rs. ${vjsonData["SwiftPrice"]}'),
+                          child: Text('Rs. ${vjsonData["shippingPrice"]}'),
                         ),
                       ]),
                     ]),

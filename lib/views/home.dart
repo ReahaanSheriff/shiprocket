@@ -5,15 +5,15 @@ import 'package:http/http.dart' as http;
 
 import 'package:load/load.dart';
 
-import 'package:Swift/views/createshipment.dart';
-import 'package:Swift/views/eachshipment.dart';
+import 'package:swift/views/createshipment.dart';
+import 'package:swift/views/eachshipment.dart';
 
-import 'package:Swift/views/profile.dart';
-import 'package:Swift/views/signin.dart';
-import 'package:Swift/views/support.dart';
+import 'package:swift/views/profile.dart';
+import 'package:swift/views/signin.dart';
+import 'package:swift/views/support.dart';
 
-import 'package:Swift/views/viewshipments.dart';
-import 'package:Swift/views/cost.dart';
+import 'package:swift/views/viewshipments.dart';
+import 'package:swift/views/cost.dart';
 import 'package:vector_math/vector_math.dart' as vec;
 
 class Home extends StatefulWidget {

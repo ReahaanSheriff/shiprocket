@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 
@@ -83,7 +83,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       //print(statusCode);
     } on Exception catch (e) {
       Fluttertoast.showToast(
-          msg: "Error in resetpassword function",
+          msg: "Error in resetpassword function $e",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 4,

@@ -43,7 +43,7 @@ class _ViewShipmentsState extends State<ViewShipments> {
 
       print(statusCode);
     } on Exception catch (e) {
-      print("error on login function");
+      print("error on login function $e");
     }
   }
 

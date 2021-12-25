@@ -9,7 +9,7 @@ import 'package:swift/views/createshipment.dart';
 import 'package:swift/views/eachshipment.dart';
 
 import 'package:swift/views/profile.dart';
-import 'package:swift/views/signin.dart';
+
 import 'package:swift/views/support.dart';
 
 import 'package:swift/views/viewshipments.dart';

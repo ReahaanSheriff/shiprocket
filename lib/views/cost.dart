@@ -5,12 +5,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 import 'dart:math';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:load/load.dart';
 import 'package:vector_math/vector_math.dart' as vec;
-import 'package:intl/intl.dart';
 
 class Cost extends StatefulWidget {
   const Cost({Key? key}) : super(key: key);

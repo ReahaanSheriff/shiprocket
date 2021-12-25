@@ -108,7 +108,7 @@ class _UpdateShipmentState extends State<UpdateShipment> {
         weightcontroller.text = gjsonData['weight'].toString();
       });
     } on Exception catch (e) {
-      print("error on GetShipmentForUpdate function");
+      print("error on GetShipmentForUpdate function $e");
     }
   }
 
@@ -143,7 +143,7 @@ class _UpdateShipmentState extends State<UpdateShipment> {
       }
     } on Exception catch (e) {
       Fluttertoast.showToast(
-          msg: "Pincode invalid or not serviceable",
+          msg: "Pincode invalid or not serviceable $e",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 4,
@@ -184,7 +184,7 @@ class _UpdateShipmentState extends State<UpdateShipment> {
       }
     } on Exception catch (e) {
       Fluttertoast.showToast(
-          msg: "hey",
+          msg: "hey $e",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 4,
@@ -245,49 +245,49 @@ class _UpdateShipmentState extends State<UpdateShipment> {
 
       //print(statusCode);
     } on Exception catch (e) {
-      print("error on updateShipmentSubmit function");
+      print("error on updateShipmentSubmit function $e");
     }
     return submitCode;
   }
 
-  Future<Position> _getGeoCostPosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+  // Future<Position> _getGeoCostPosition() async {
+  //   bool serviceEnabled;
+  //   LocationPermission permission;
 
-    // Test if Cost services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Cost services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the Cost services.
-      await Geolocator.openLocationSettings();
-      return Future.error('Cost services are disabled.');
-    }
+  //   // Test if Cost services are enabled.
+  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     // Cost services are not enabled don't continue
+  //     // accessing the position and request users of the
+  //     // App to enable the Cost services.
+  //     await Geolocator.openLocationSettings();
+  //     return Future.error('Cost services are disabled.');
+  //   }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Cost permissions are denied');
-      }
-    }
+  //   permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       // Permissions are denied, next time you could try
+  //       // requesting permissions again (this is also where
+  //       // Android's shouldShowRequestPermissionRationale
+  //       // returned true. According to Android guidelines
+  //       // your App should show an explanatory UI now.
+  //       return Future.error('Cost permissions are denied');
+  //     }
+  //   }
 
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Cost permissions are permanently denied, we cannot request permissions.');
-    }
+  //   if (permission == LocationPermission.deniedForever) {
+  //     // Permissions are denied forever, handle appropriately.
+  //     return Future.error(
+  //         'Cost permissions are permanently denied, we cannot request permissions.');
+  //   }
 
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-  }
+  //   // When we reach here, permissions are granted and we can
+  //   // continue accessing the position of the device.
+  //   return await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
+  // }
 
   Future<void> getCurrentAddress(Position position) async {
     try {
@@ -314,7 +314,7 @@ class _UpdateShipmentState extends State<UpdateShipment> {
       // print(tolong);
     } on Exception catch (e) {
       Fluttertoast.showToast(
-          msg: "Unable to get current location",
+          msg: "Unable to get current location $e",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 4,

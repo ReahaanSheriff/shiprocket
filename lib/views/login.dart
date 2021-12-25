@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/scheduler.dart';
+
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:load/load.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:swift/views/forgetpassword.dart';
 import 'package:swift/views/home.dart';
@@ -61,7 +60,7 @@ class _LoginState extends State<Login> {
       print(token);
       //print(statusCode);
     } on Exception catch (e) {
-      print("error on login function");
+      print("error on login function $e");
     }
     return statusCode;
   }
@@ -153,7 +152,7 @@ class _LoginState extends State<Login> {
                           });
                         } on Exception catch (e) {
                           Fluttertoast.showToast(
-                              msg: "Invalid Credentials",
+                              msg: "Invalid Credentialsc $e",
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.CENTER,
                               timeInSecForIosWeb: 4,
@@ -239,7 +238,7 @@ class _LoginState extends State<Login> {
                           });
                         } on Exception catch (e) {
                           Fluttertoast.showToast(
-                              msg: "Invalid Credentials",
+                              msg: "Invalid Credentials $e",
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.CENTER,
                               timeInSecForIosWeb: 4,

@@ -270,7 +270,7 @@ class _ProfileState extends State<Profile> {
                             });
                           } on Exception catch (e) {
                             Fluttertoast.showToast(
-                                msg: "Invalid Credentials",
+                                msg: "Invalid Credentials $e",
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 4,

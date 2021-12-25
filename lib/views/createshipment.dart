@@ -10,7 +10,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:load/load.dart';
 
-import 'package:swift/views/viewshipments.dart';
 import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -187,7 +186,7 @@ class _PickupAddressState extends State<PickupAddress>
       // print(tolong);
     } on Exception catch (e) {
       Fluttertoast.showToast(
-          msg: "Unable to get current location",
+          msg: "Unable to get current location $e",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 4,
@@ -229,7 +228,7 @@ class _PickupAddressState extends State<PickupAddress>
       }
     } on Exception catch (e) {
       Fluttertoast.showToast(
-          msg: "Pincode invalid or not serviceable",
+          msg: "Pincode invalid or not serviceable $e",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 4,
@@ -270,7 +269,7 @@ class _PickupAddressState extends State<PickupAddress>
       }
     } on Exception catch (e) {
       Fluttertoast.showToast(
-          msg: "hey",
+          msg: "hey $e",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 4,
@@ -738,7 +737,7 @@ class _PickupAddressState extends State<PickupAddress>
         }
       } on Exception catch (e) {
         Fluttertoast.showToast(
-            msg: "Weight cannot be in deciaml",
+            msg: "Weight cannot be in deciaml $e",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 4,
@@ -814,7 +813,7 @@ class _PickupAddressState extends State<PickupAddress>
       print(statusCode);
     } on Exception catch (e) {
       print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
-      print("error on post request tracking");
+      print("error on post request tracking $e");
       print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
       Fluttertoast.showToast(
           msg: "error on post request tracking",

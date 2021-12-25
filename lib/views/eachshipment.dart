@@ -103,7 +103,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       });
       //print(statusCode);
     } on Exception catch (e) {
-      print("error on login function");
+      print("error on login function $e");
     }
   }
 
@@ -146,7 +146,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
       //print(statusCode);
     } on Exception catch (e) {
-      print("error on cancel function");
+      print("error on cancel function $e");
     }
   }
 
@@ -213,7 +213,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       print(outforpickup);
       //print(statusCode);
     } on Exception catch (e) {
-      print("error on login function");
+      print("error on login function $e");
     }
   }
 
@@ -792,7 +792,7 @@ class _TrackingState extends State<Tracking> {
       });
       //print(statusCode);
     } on Exception catch (e) {
-      print("error on login function");
+      print("error on login function $e");
     }
   }
 

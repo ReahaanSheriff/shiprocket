@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -6,6 +8,7 @@ import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
+import 'package:load/load.dart';
 import 'package:vector_math/vector_math.dart' as vec;
 import 'package:intl/intl.dart';
 
@@ -31,44 +34,44 @@ class _CostState extends State<Cost> {
   var pickaddresscontroller = new TextEditingController();
   var fromlat, fromlong;
 
-  Future<Position> _getGeoCostPosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+  // Future<Position> _getGeoCostPosition() async {
+  //   bool serviceEnabled;
+  //   LocationPermission permission;
 
-    // Test if Cost services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Cost services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the Cost services.
-      await Geolocator.openLocationSettings();
-      return Future.error('Cost services are disabled.');
-    }
+  //   // Test if Cost services are enabled.
+  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     // Cost services are not enabled don't continue
+  //     // accessing the position and request users of the
+  //     // App to enable the Cost services.
+  //     await Geolocator.openLocationSettings();
+  //     return Future.error('Cost services are disabled.');
+  //   }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Cost permissions are denied');
-      }
-    }
+  //   permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       // Permissions are denied, next time you could try
+  //       // requesting permissions again (this is also where
+  //       // Android's shouldShowRequestPermissionRationale
+  //       // returned true. According to Android guidelines
+  //       // your App should show an explanatory UI now.
+  //       return Future.error('Cost permissions are denied');
+  //     }
+  //   }
 
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Cost permissions are permanently denied, we cannot request permissions.');
-    }
+  //   if (permission == LocationPermission.deniedForever) {
+  //     // Permissions are denied forever, handle appropriately.
+  //     return Future.error(
+  //         'Cost permissions are permanently denied, we cannot request permissions.');
+  //   }
 
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-  }
+  //   // When we reach here, permissions are granted and we can
+  //   // continue accessing the position of the device.
+  //   return await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
+  // }
 
   // Future destinationLatLong() async {
   //   final queryParameters = {
@@ -95,23 +98,23 @@ class _CostState extends State<Cost> {
   //   });
   //   //return ([tolat, tolong]);
   // }
-  Future<void> getCurrentAddress(Position position) async {
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-//print(placemarks);
-    Placemark place = placemarks[1];
-    fromAddress =
-        '${place.thoroughfare}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
-    setState(() {});
-    print(place);
+//   Future<void> getCurrentAddress(Position position) async {
+//     List<Placemark> placemarks =
+//         await placemarkFromCoordinates(position.latitude, position.longitude);
+// //print(placemarks);
+//     Placemark place = placemarks[1];
+//     fromAddress =
+//         '${place.thoroughfare}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+//     setState(() {});
+//     print(place);
 
-    print(position.latitude);
-    print(position.longitude);
-    print(tolat);
-    print(tolong);
-  }
+//     print(position.latitude);
+//     print(position.longitude);
+//     print(tolat);
+//     print(tolong);
+//   }
 
-  Future<void> getAddressFromLatLong(Position position) async {
+  Future<void> getAddressFromLatLong() async {
     final toqueryParameters = {
       'access_key': env["ACCESS_KEY"],
       'query': '${destaddresscontroller.text}',
@@ -163,11 +166,15 @@ class _CostState extends State<Cost> {
 
     double data() {
       var lat1 = fromlat;
+      print(lat1);
       //position.latitude;
       var lng1 = fromlong;
+      print(lng1);
       //position.longitude;
       var lat2 = tolat;
+      print(lat2);
       var lng2 = tolong;
+      print(lng2);
       var result;
       try {
         result = 6371 *
@@ -178,12 +185,31 @@ class _CostState extends State<Cost> {
       } catch (e) {
         print(e);
       }
-      //print(result);
-      return result;
+      if (result != null) {
+        if (result.isNaN) {
+          return 0;
+        } else {
+          print(result);
+          return result;
+        }
+      }
+      return 0;
     }
 
-    res = data();
-    print(res);
+    try {
+      res = data();
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    print("-----------------------");
+    if (res.isNaN) {
+      print("double");
+    } else {
+      print(res);
+    }
+
+    print("-----------------------");
     int price() {
       try {
         if (num.parse(weightcontroller.text) <= 0.500) {
@@ -385,7 +411,12 @@ class _CostState extends State<Cost> {
     }
 
     kms = price();
+    print("----------------------- amount-------");
     print(kms);
+    setState(() {
+      kms;
+    });
+
     // try {
     //   distance = await Geolocator.distanceBetween(
     //       position.latitude, position.longitude, tolat, tolong);
@@ -399,19 +430,19 @@ class _CostState extends State<Cost> {
     // print(distance);
 
     // Date
-    try {
-      var formatter = new DateFormat('dd-MM-yyyy');
+    // try {
+    //   var formatter = new DateFormat('dd-MM-yyyy');
 
-      var thirtyDaysFromNow =
-          formatter.format(DateTime.now().add(new Duration(days: estday)));
+    //   var thirtyDaysFromNow =
+    //       formatter.format(DateTime.now().add(new Duration(days: estday)));
 
-      print(thirtyDaysFromNow);
+    //   print(thirtyDaysFromNow);
 
-      // end date
-      setState(() {});
-    } on Exception catch (e) {
-      print(e);
-    }
+    //   // end date
+    //   setState(() {});
+    // } on Exception catch (e) {
+    //   print(e);
+    // }
   }
 
   @override
@@ -421,77 +452,89 @@ class _CostState extends State<Cost> {
         title: Text("Calculate Price"),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Calculate Shipment Price',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            //Text(
-            // Cost,
-            //style: TextStyle(color: Colors.black, fontSize: 16),
-            //),
-            SizedBox(
-              height: 10,
-            ),
-            // Text(
-            //   'ADDRESS',
-            //   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            // ),
-            SizedBox(
-              height: 10,
-            ),
-            //Text('${fromAddress}'),
-            // ElevatedButton(
-            //     onPressed: () async {
-            //       Position position = await _getGeoCostPosition();
-            //       Cost =
-            //           'Lat: ${position.latitude} , Long: ${position.longitude}';
-            //       getCurrentAddress(position);
-            //     },
-            //     child: Text('Get Address')),
-            TextFormField(
-                //initialValue: fromAddress,
-                controller: pickaddresscontroller,
-                onFieldSubmitted: (String str) {
-                  setState(() {});
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Pickup Address',
-                )),
-            TextFormField(
-                //initialValue: fromAddress,
-                controller: destaddresscontroller,
-                onFieldSubmitted: (String str) {
-                  setState(() {});
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Destination Address',
-                )),
-            TextFormField(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Calculate Shipment Price',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+
+              //Text('${fromAddress}'),
+              // ElevatedButton(
+              //     onPressed: () async {
+              //       Position position = await _getGeoCostPosition();
+              //       Cost =
+              //           'Lat: ${position.latitude} , Long: ${position.longitude}';
+              //       getCurrentAddress(position);
+              //     },
+              //     child: Text('Get Address')),
+              TextFormField(
+                  //initialValue: fromAddress,
+                  controller: pickaddresscontroller,
+                  onFieldSubmitted: (String str) {
+                    setState(() {});
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Pickup Address with pincode',
+                  )),
+              TextFormField(
+                  //initialValue: fromAddress,
+                  controller: destaddresscontroller,
+                  onFieldSubmitted: (String str) {
+                    setState(() {});
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Destination Address with pincode',
+                  )),
+              TextFormField(
                 controller: weightcontroller,
                 decoration: const InputDecoration(
                   labelText: 'Weight in kg eg (0.5)',
-                )),
-            //Text('Distance in kms ${res}'),
-            SizedBox(
-              height: 10,
-            ),
-            Text('Total expected shipping cost $kms'),
-            SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-                onPressed: () async {
-                  Position position = await _getGeoCostPosition();
-                  getAddressFromLatLong(position);
-                },
-                child: Text("Get Price"))
-          ],
+                ),
+                keyboardType: TextInputType.numberWithOptions(),
+              ),
+              //Text('Distance in kms ${res}'),
+              SizedBox(
+                height: 10,
+              ),
+              Text('Total expected shipping cost $kms'),
+              SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    if (pickaddresscontroller.text != "" &&
+                        pickaddresscontroller.text.contains(RegExp(r'[0-9]')) &&
+                        destaddresscontroller.text != "" &&
+                        destaddresscontroller.text.contains(RegExp(r'[0-9]')) &&
+                        weightcontroller.text != "") {
+                      showLoadingDialog();
+                      Timer(Duration(seconds: 1), () {
+                        hideLoadingDialog();
+                      });
+
+                      getAddressFromLatLong();
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: "Fields cannot be empty or recheck your address",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 4,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
+                    //Position position = await _getGeoCostPosition();
+                  },
+                  child: Text("Get Price"))
+            ],
+          ),
         ),
       ),
     );

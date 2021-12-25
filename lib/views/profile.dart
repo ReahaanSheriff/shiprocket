@@ -20,18 +20,12 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  // final FirebaseAuth auth = FirebaseAuth.instance;
-  // String myProfilePic = FirebaseAuth.instance.currentUser!.photoURL.toString();
-  // String myName = FirebaseAuth.instance.currentUser!.displayName.toString();
-  // String myEmail = FirebaseAuth.instance.currentUser!.email.toString();
-  // String newName = FirebaseAuth.instance.currentUser!.email
-  //     .toString()
-  //     .replaceAll("@gmail.com", "");
   var currentuserresponse, responseBody, name, email, excep;
   var oldpassword = TextEditingController();
   var newpassword = TextEditingController();
   bool oObscure = true;
   bool nObscure = true;
+
   currentUser() async {
     final uri = Uri.parse('http://reahaan.pythonanywhere.com/currentuser/');
     final headers = {'Authorization': 'Token ' + widget.value.toString()};
@@ -131,9 +125,9 @@ class _ProfileState extends State<Profile> {
     super.initState();
 
     print(widget.value);
-
-    showLoadingDialog();
     currentUser();
+    showLoadingDialog();
+
     Timer(Duration(seconds: 1), () {
       hideLoadingDialog();
     });
@@ -169,7 +163,7 @@ class _ProfileState extends State<Profile> {
                         padding: const EdgeInsets.only(left: 100.0),
                         child: ListTile(
                           contentPadding: EdgeInsets.all(10),
-                          onTap: () {},
+                          //onTap: () {},
                           // ignore: unnecessary_null_comparison
                           title: Text(name == null ? name = "name" : name),
                           subtitle:
@@ -293,16 +287,23 @@ class _ProfileState extends State<Profile> {
             ElevatedButton(
                 onPressed: () {
                   signout().then((_) async {
-                    Navigator.pop(context, true);
-                    Navigator.pushReplacement(
+                    Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => SignIn()),
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => SignIn(),
+                      ),
+                      (route) => false,
                     );
+                    // Navigator.pop(context);
+                    // Navigator.pushReplacement(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => SignIn()),
+                    // );
+
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     prefs.clear();
                     deleteTokens();
-                    // Navigator.popUntil(context, ModalRoute.withName('/signin'));
                   });
                 },
                 child: Padding(

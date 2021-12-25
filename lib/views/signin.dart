@@ -17,11 +17,12 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("swift"),
-        automaticallyImplyLeading: false,
-      ),
+      // appBar: AppBar(
+      //   title: Text("swift"),
+      //   automaticallyImplyLeading: false,
+      // ),
       body: SigninForm(),
+      //backgroundColor: Colors.green[100],
     );
   }
 }
@@ -79,384 +80,427 @@ class _SigninFormState extends State<SigninForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          TextFormField(
-            controller: usernamecontroller,
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.person),
-              //hintText: 'Door no and Street Name',
-              labelText: 'Username',
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 50,
             ),
-          ),
-          TextFormField(
-            controller: emailcontroller,
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.person),
-              //hintText: 'Door no and Street Name',
-              labelText: 'Email',
-            ),
-          ),
-          TextFormField(
-            controller: passwordcontroller,
-            obscureText: _isObscure,
-            decoration: InputDecoration(
-              icon: const Icon(Icons.person),
-              //hintText: 'Door no and Street Name',
-              labelText: 'Password',
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    _isObscure = !_isObscure;
-                  });
-                },
-                icon:
-                    Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
+
+            Text(
+              "Swift",
+              style: TextStyle(
+                fontFamily: 'Pacifico',
+                fontSize: 25,
               ),
             ),
-          ),
-          TextFormField(
-            onFieldSubmitted: (String str) {
-              final String confirmPassword = confirmcontroller.text.trim();
-              final String username = usernamecontroller.text.trim();
-              final String email = emailcontroller.text.trim();
-              final String password = passwordcontroller.text.toString().trim();
-              if (email.isEmpty) {
-                Fluttertoast.showToast(
-                    msg: "Email field is empty",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
+            SizedBox(
+              height: 100,
+            ),
+            Text(
+              "SignUp",
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextFormField(
+                controller: usernamecontroller,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  icon: const Icon(Icons.person),
+                  //hintText: 'Door no and Street Name',
+                  labelText: 'Username',
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextFormField(
+                controller: emailcontroller,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  icon: const Icon(Icons.email),
+                  //hintText: 'Door no and Street Name',
+                  labelText: 'Email',
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextFormField(
+                controller: passwordcontroller,
+                obscureText: _isObscure,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  icon: const Icon(Icons.password),
+                  //hintText: 'Door no and Street Name',
+                  labelText: 'Password',
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isObscure = !_isObscure;
+                      });
+                    },
+                    icon: Icon(
+                        _isObscure ? Icons.visibility : Icons.visibility_off),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextFormField(
+                onFieldSubmitted: (String str) {
+                  final String confirmPassword = confirmcontroller.text.trim();
+                  final String username = usernamecontroller.text.trim();
+                  final String email = emailcontroller.text.trim();
+                  final String password =
+                      passwordcontroller.text.toString().trim();
+                  if (email.isEmpty) {
+                    Fluttertoast.showToast(
+                        msg: "Email field is empty",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
 
-                //print('Email field is empty');
-              } else if (!email.contains('@')) {
-                Fluttertoast.showToast(
-                    msg: "Email is not valid",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              } else if (password.isEmpty) {
-                Fluttertoast.showToast(
-                    msg: "Password field is empty",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              } else if (password.length < 8) {
-                Fluttertoast.showToast(
-                    msg: "Password should be greater than 7 letters",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              } else if (!password
-                  .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-                Fluttertoast.showToast(
-                    msg: "Password should contain 1 special character",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              } else if (username.isEmpty) {
-                Fluttertoast.showToast(
-                    msg: "Username field is empty",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-                print("Username field is empty");
-              } else if (username.length < 4) {
-                Fluttertoast.showToast(
-                    msg: "Username should be grater than 3 letters",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              } else if (password != confirmPassword) {
-                Fluttertoast.showToast(
-                    msg: "Password does not match",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              } else {
-                try {
-                  signin().then((value) {
-                    if (value == 201) {
+                    //print('Email field is empty');
+                  } else if (!email.contains('@')) {
+                    Fluttertoast.showToast(
+                        msg: "Email is not valid",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (password.isEmpty) {
+                    Fluttertoast.showToast(
+                        msg: "Password field is empty",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (password.length < 8) {
+                    Fluttertoast.showToast(
+                        msg: "Password should be greater than 7 letters",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (!password
+                      .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                    Fluttertoast.showToast(
+                        msg: "Password should contain 1 special character",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (username.isEmpty) {
+                    Fluttertoast.showToast(
+                        msg: "Username field is empty",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    print("Username field is empty");
+                  } else if (username.length < 4) {
+                    Fluttertoast.showToast(
+                        msg: "Username should be grater than 3 letters",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (password != confirmPassword) {
+                    Fluttertoast.showToast(
+                        msg: "Password does not match",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else {
+                    try {
+                      signin().then((value) {
+                        if (value == 201) {
+                          Fluttertoast.showToast(
+                              msg: "Registered Successfully",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) => Login()));
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: responseBody.toString(),
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      });
+                    } catch (e) {
                       Fluttertoast.showToast(
-                          msg: "Registered Successfully",
+                          msg: "Invalid Credentials",
                           toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 4,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Login()));
-                    } else {
-                      Fluttertoast.showToast(
-                          msg: responseBody.toString(),
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
+                          gravity: ToastGravity.CENTER,
                           timeInSecForIosWeb: 4,
                           backgroundColor: Colors.red,
                           textColor: Colors.white,
                           fontSize: 16.0);
                     }
-                  });
-                } catch (e) {
-                  Fluttertoast.showToast(
-                      msg: "Invalid Credentials",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                }
-              }
-            },
-            controller: confirmcontroller,
-            obscureText: _isConObscure,
-            decoration: InputDecoration(
-              icon: const Icon(Icons.person),
-              //hintText: 'Door no and Street Name',
-              labelText: 'Confirm Pasword',
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    _isConObscure = !_isConObscure;
-                  });
+                  }
                 },
-                icon: Icon(
-                    _isConObscure ? Icons.visibility : Icons.visibility_off),
+                controller: confirmcontroller,
+                obscureText: _isConObscure,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  icon: const Icon(Icons.password),
+                  //hintText: 'Door no and Street Name',
+                  labelText: 'Confirm Pasword',
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isConObscure = !_isConObscure;
+                      });
+                    },
+                    icon: Icon(_isConObscure
+                        ? Icons.visibility
+                        : Icons.visibility_off),
+                  ),
+                ),
               ),
             ),
-          ),
 
-          ElevatedButton(
-              onPressed: () {
-                final String confirmPassword = confirmcontroller.text.trim();
-                final String username = usernamecontroller.text.trim();
-                final String email = emailcontroller.text.trim();
-                final String password =
-                    passwordcontroller.text.toString().trim();
-                if (email.isEmpty) {
-                  Fluttertoast.showToast(
-                      msg: "Email field is empty",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-
-                  //print('Email field is empty');
-                } else if (password.isEmpty) {
-                  Fluttertoast.showToast(
-                      msg: "Password field is empty",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                  print("Password field is empty");
-                } else if (password.length < 8) {
-                  Fluttertoast.showToast(
-                      msg: "Password should be greater than 7 letters",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                } else if (!password
-                    .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-                  Fluttertoast.showToast(
-                      msg: "Password should contain 1 special character",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                } else if (username.isEmpty) {
-                  Fluttertoast.showToast(
-                      msg: "Username field is empty",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                  print("Username field is empty");
-                } else if (username.length < 4) {
-                  Fluttertoast.showToast(
-                      msg: "Username should be grater than 3 letters",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                } else if (password != confirmPassword) {
-                  Fluttertoast.showToast(
-                      msg: "Password does not match",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                } else {
-                  try {
-                    signin().then((value) {
-                      if (value == 201) {
-                        Fluttertoast.showToast(
-                            msg: "Registered Successfully",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 4,
-                            backgroundColor: Colors.green,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => Login()));
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: responseBody.toString(),
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 4,
-                            backgroundColor: Colors.red,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
-                      }
-                    });
-                    // start Firebase end
-                    // AuthMethods()
-                    //     .signup(email, password, confirmPassword)
-                    //     .then((value) async {
-                    //   if (value == "Signed Up") {
-                    //     Navigator.pushReplacement(context,
-                    //         MaterialPageRoute(builder: (context) => Home()));
-                    //     Fluttertoast.showToast(
-                    //         msg: "Signed In successfully",
-                    //         toastLength: Toast.LENGTH_SHORT,
-                    //         gravity: ToastGravity.CENTER,
-                    //         timeInSecForIosWeb: 4,
-                    //         backgroundColor: Colors.green,
-                    //         textColor: Colors.white,
-                    //         fontSize: 16.0);
-                    //   }
-                    // }).then((value) async {
-                    //   User? user = FirebaseAuth.instance.currentUser;
-                    //   await FirebaseFirestore.instance
-                    //       .collection("users")
-                    //       .doc(user!.uid)
-                    //       .set({
-                    //     'uid': user.uid,
-                    //     'email': email,
-                    //     'password': password,
-                    //   });
-                    // });
-                    // end firebase auth
-                  } catch (e) {
+            ElevatedButton(
+                onPressed: () {
+                  final String confirmPassword = confirmcontroller.text.trim();
+                  final String username = usernamecontroller.text.trim();
+                  final String email = emailcontroller.text.trim();
+                  final String password =
+                      passwordcontroller.text.toString().trim();
+                  if (email.isEmpty) {
                     Fluttertoast.showToast(
-                        msg: "Invalid Credentials",
+                        msg: "Email field is empty",
                         toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
+                        gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 4,
                         backgroundColor: Colors.red,
                         textColor: Colors.white,
                         fontSize: 16.0);
+
+                    //print('Email field is empty');
+                  } else if (password.isEmpty) {
+                    Fluttertoast.showToast(
+                        msg: "Password field is empty",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    print("Password field is empty");
+                  } else if (password.length < 8) {
+                    Fluttertoast.showToast(
+                        msg: "Password should be greater than 7 letters",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (!password
+                      .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                    Fluttertoast.showToast(
+                        msg: "Password should contain 1 special character",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (username.isEmpty) {
+                    Fluttertoast.showToast(
+                        msg: "Username field is empty",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    print("Username field is empty");
+                  } else if (username.length < 4) {
+                    Fluttertoast.showToast(
+                        msg: "Username should be grater than 3 letters",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (password != confirmPassword) {
+                    Fluttertoast.showToast(
+                        msg: "Password does not match",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else {
+                    try {
+                      signin().then((value) {
+                        if (value == 201) {
+                          Fluttertoast.showToast(
+                              msg: "Registered Successfully",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) => Login()));
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: responseBody.toString(),
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      });
+                      // start Firebase end
+                      // AuthMethods()
+                      //     .signup(email, password, confirmPassword)
+                      //     .then((value) async {
+                      //   if (value == "Signed Up") {
+                      //     Navigator.pushReplacement(context,
+                      //         MaterialPageRoute(builder: (context) => Home()));
+                      //     Fluttertoast.showToast(
+                      //         msg: "Signed In successfully",
+                      //         toastLength: Toast.LENGTH_SHORT,
+                      //         gravity: ToastGravity.CENTER,
+                      //         timeInSecForIosWeb: 4,
+                      //         backgroundColor: Colors.green,
+                      //         textColor: Colors.white,
+                      //         fontSize: 16.0);
+                      //   }
+                      // }).then((value) async {
+                      //   User? user = FirebaseAuth.instance.currentUser;
+                      //   await FirebaseFirestore.instance
+                      //       .collection("users")
+                      //       .doc(user!.uid)
+                      //       .set({
+                      //     'uid': user.uid,
+                      //     'email': email,
+                      //     'password': password,
+                      //   });
+                      // });
+                      // end firebase auth
+                    } catch (e) {
+                      Fluttertoast.showToast(
+                          msg: "Invalid Credentials",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 4,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
                   }
-                }
-              },
-              child: Text("SIGNUP")),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
-              },
-              child: Text("Already Have an account? Login")),
-          // Container(
-          //   child: Center(
-          //       child: InkWell(
-          //     onTap: () {
-          //       AuthMethods().signInWithGoogle(context);
-          //     },
-          //     child: Ink(
-          //       color: Color(0xFF4285F4),
-          //       //color: Colors.lightBlue,
-          //       //color: Color(0xFF397AF3),
-          //       child: Padding(
-          //         padding: EdgeInsets.all(6),
-          //         child: Wrap(
-          //           crossAxisAlignment: WrapCrossAlignment.center,
-          //           children: [
-          //             //Icon(Icons.android), // <-- Use 'Image.asset(...)' here
-          //             Image.asset(
-          //               'images/google.png',
-          //               height: 48,
-          //             ),
+                },
+                child: Text("SIGNUP")),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                },
+                child: Text("Already Have an account? Login")),
+            // Container(
+            //   child: Center(
+            //       child: InkWell(
+            //     onTap: () {
+            //       AuthMethods().signInWithGoogle(context);
+            //     },
+            //     child: Ink(
+            //       color: Color(0xFF4285F4),
+            //       //color: Colors.lightBlue,
+            //       //color: Color(0xFF397AF3),
+            //       child: Padding(
+            //         padding: EdgeInsets.all(6),
+            //         child: Wrap(
+            //           crossAxisAlignment: WrapCrossAlignment.center,
+            //           children: [
+            //             //Icon(Icons.android), // <-- Use 'Image.asset(...)' here
+            //             Image.asset(
+            //               'images/google.png',
+            //               height: 48,
+            //             ),
 
-          //             SizedBox(width: 12),
-          //             Text(
-          //               'Sign in with Google',
-          //               style: TextStyle(color: Colors.white),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   )
+            //             SizedBox(width: 12),
+            //             Text(
+            //               'Sign in with Google',
+            //               style: TextStyle(color: Colors.white),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   )
 
-          //       // child: GestureDetector(
-          //       //   onTap: () {
-          //       //     AuthMethods().signInWithGoogle(context);
-          //       //   },
-          //       //   child: Container(
-          //       //       // decoration: BoxDecoration(
-          //       //       //     borderRadius: BorderRadius.circular(24), color: Colors.red),
-          //       //       // padding: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-          //       //       child: SignInButton(
-          //       //     Buttons.GoogleDark,
-          //       //     //SizedBox(width: 12),
-          //       //     padding: EdgeInsets.all(6),
-          //       //     onPressed: () {
-          //       //       AuthMethods().signInWithGoogle(context);
-          //       //     },
-          //       //   )),
-          //       //   // child: Text(
-          //       //   //   "Sign In with Google",
-          //       //   //   style: TextStyle(fontSize: 16, color: Colors.white),
-          //       //   // ))
-          //       // ),
-          //       ),
-          // ),
-        ],
+            //       // child: GestureDetector(
+            //       //   onTap: () {
+            //       //     AuthMethods().signInWithGoogle(context);
+            //       //   },
+            //       //   child: Container(
+            //       //       // decoration: BoxDecoration(
+            //       //       //     borderRadius: BorderRadius.circular(24), color: Colors.red),
+            //       //       // padding: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+            //       //       child: SignInButton(
+            //       //     Buttons.GoogleDark,
+            //       //     //SizedBox(width: 12),
+            //       //     padding: EdgeInsets.all(6),
+            //       //     onPressed: () {
+            //       //       AuthMethods().signInWithGoogle(context);
+            //       //     },
+            //       //   )),
+            //       //   // child: Text(
+            //       //   //   "Sign In with Google",
+            //       //   //   style: TextStyle(fontSize: 16, color: Colors.white),
+            //       //   // ))
+            //       // ),
+            //       ),
+            // ),
+          ],
+        ),
       ),
     );
   }

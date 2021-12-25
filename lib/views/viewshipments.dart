@@ -47,6 +47,11 @@ class _ViewShipmentsState extends State<ViewShipments> {
     }
   }
 
+  Future<void> _pullRefresh() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+    viewAllShipment();
+  }
+
   @override
   void initState() {
     viewAllShipment();
@@ -65,63 +70,77 @@ class _ViewShipmentsState extends State<ViewShipments> {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(12),
-              children: <Widget>[
-                Padding(padding: EdgeInsets.only(top: 10)),
-                if (jsonData == null)
-                  Center(child: Text("No shipments"))
-                else if (jsonData != null)
-                  for (var i in jsonData)
-                    Container(
-                      height: 100,
-                      child: Card(
-                          child: ListTile(
-                              contentPadding: EdgeInsets.all(10),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => new EachShipment(
-                                          value: i["orderId"],
-                                          token: widget.value)),
-                                );
-                              },
-                              // ignore: unnecessary_brace_in_string_interps
-                              title: Text("Order ID-" + ' ${i["orderId"]}'),
-                              subtitle: Container(
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 40)),
-                                        Text("${i['created']}"
-                                                .substring(8, 10) +
-                                            "${i['created']}".substring(4, 8) +
-                                            "${i['created']}".substring(0, 4)),
-                                        Padding(
-                                            padding: EdgeInsets.only(
-                                                right: 15, top: 10)),
-                                        Text("Rs. ${i['productValue']}"),
-                                        Padding(
-                                            padding: EdgeInsets.only(
-                                                right: 15, top: 10)),
-                                        Text("pin ${i['dpincode']}")
-                                      ],
-                                    ),
-                                  ],
+            child: RefreshIndicator(
+              onRefresh: () => _pullRefresh(),
+              child: ListView(
+                padding: const EdgeInsets.all(12),
+                children: <Widget>[
+                  Padding(padding: EdgeInsets.only(top: 10)),
+                  if (jsonData == null)
+                    Center(child: Text("No shipments"))
+                  else if (jsonData != null)
+                    for (var i in jsonData.reversed.toList())
+                      Container(
+                        height: 100,
+                        child: Card(
+                            child: ListTile(
+                                contentPadding: EdgeInsets.all(10),
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EachShipment(
+                                            value: i["orderId"],
+                                            token: widget.value)),
+                                  );
+
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //       builder: (context) => EachShipment(
+                                  //           value: i["orderId"],
+                                  //           token: widget.value)),
+                                  // );
+                                },
+                                // ignore: unnecessary_brace_in_string_interps
+                                title: Text("Order ID-" + ' ${i["orderId"]}'),
+                                subtitle: Container(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 40)),
+                                          Text("${i['created']}"
+                                                  .substring(8, 10) +
+                                              "${i['created']}"
+                                                  .substring(4, 8) +
+                                              "${i['created']}"
+                                                  .substring(0, 4)),
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: 15, top: 10)),
+                                          Text("Rs. ${i['productValue']}"),
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: 15, top: 10)),
+                                          Text("pin ${i['dpincode']}")
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              leading: Icon(
-                                Icons.assignment_rounded,
-                                size: 40,
-                              ),
-                              trailing:
-                                  Icon(Icons.arrow_forward_ios_outlined))),
-                    ),
-                Padding(padding: EdgeInsets.only(top: 10)),
-              ],
+                                leading: Icon(
+                                  Icons.assignment_rounded,
+                                  size: 40,
+                                ),
+                                trailing:
+                                    Icon(Icons.arrow_forward_ios_outlined))),
+                      ),
+                  Padding(padding: EdgeInsets.only(top: 10)),
+                ],
+              ),
             ),
           ),
         ],

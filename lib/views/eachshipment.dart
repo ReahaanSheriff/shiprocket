@@ -416,7 +416,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               child: Card(
                   child: ListTile(
                 contentPadding: EdgeInsets.all(10),
-                onTap: () {},
+                //onTap: () {},
                 title: Text(getStatus()),
                 subtitle: Container(
                   child:
@@ -433,7 +433,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             child: Card(
                 child: ListTile(
               contentPadding: EdgeInsets.all(10),
-              onTap: () {},
+              //onTap: () {},
               title: Text(
                 "Recipient Details",
                 style:
@@ -534,7 +534,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             child: Card(
                 child: ListTile(
               contentPadding: EdgeInsets.all(10),
-              onTap: () {},
+              //onTap: () {},
               title: Text(
                 "Product Details",
                 style:
@@ -610,7 +610,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             child: Card(
                 child: ListTile(
               contentPadding: EdgeInsets.all(10),
-              onTap: () {},
+              //onTap: () {},
               title: Text(
                 "Shipments Details",
                 style:

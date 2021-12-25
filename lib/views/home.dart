@@ -49,9 +49,13 @@ class _HomeState extends State<Home> {
         //   '/': (context) => Home(value: widget.value),
         //   "signin": (context) => SignIn()
         // },
+
         Scaffold(
             appBar: AppBar(
-              title: Text("Swift"),
+              title: Text(
+                "Swift",
+                style: TextStyle(fontFamily: 'Pacifico'),
+              ),
               automaticallyImplyLeading: false,
               actions: [
                 InkWell(
@@ -88,13 +92,21 @@ class _HomeState extends State<Home> {
                         child: TextField(
                           controller: search,
                           onSubmitted: (String str) {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => EachShipment(
                                       token: widget.value.toString(),
                                       value: search.text.toString())),
                             );
+
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => EachShipment(
+                            //           token: widget.value.toString(),
+                            //           value: search.text.toString())),
+                            // );
                           },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -150,6 +162,12 @@ class _HomeState extends State<Home> {
                                           builder: (context) => CreateShipment(
                                               value: widget.value.toString())),
                                     );
+                                    // Navigator.pushReplacement(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //       builder: (context) => CreateShipment(
+                                    //           value: widget.value.toString())),
+                                    // );
                                     hideLoadingDialog();
                                   });
                                 },

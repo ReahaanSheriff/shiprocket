@@ -391,12 +391,18 @@ class _PickupAddressState extends State<PickupAddress>
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) {
-    makePostRequest();
+    makePostRequest().then((_) {
+      Navigator.pop(context);
+      // Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) => ViewShipments(value: widget.value)));
+    });
     //makePostRequestTracking();
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ViewShipments(value: widget.value)));
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => ViewShipments(value: widget.value)));
 
     Fluttertoast.showToast(
         msg: "Payment success",
@@ -510,14 +516,32 @@ class _PickupAddressState extends State<PickupAddress>
       } catch (e) {
         print(e);
       }
+      if (result != null) {
+        if (result.isNaN) {
+          return 0;
+        } else {
+          print(result);
+          return result;
+        }
+      }
+      return 0;
       //print(result);
-      return result;
     }
 
-    res = data();
+    try {
+      res = data();
+    } on Exception catch (e) {
+      print(e);
+    }
 
-    print(res);
+    print("-----------------------");
+    if (res.isNaN) {
+      print("double");
+    } else {
+      print(res);
+    }
 
+    print("-----------------------");
     int price() {
       try {
         if (num.parse(weightcontroller.text) <= 0.500) {
@@ -1171,7 +1195,7 @@ class _PickupAddressState extends State<PickupAddress>
               setState(() {
                 getToPincodeData();
               });
-              Timer(Duration(seconds: 3), () {
+              Timer(Duration(seconds: 2), () {
                 hideLoadingDialog();
               });
             },

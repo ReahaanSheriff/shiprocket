@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:swift/views/home.dart';
 import 'package:swift/views/sharedpref.dart';
